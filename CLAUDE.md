@@ -88,15 +88,14 @@ flattened illustration:
   the room in a task explicitly scoped as audit/planning-only.
 - Don't delete existing work without being asked, even code that looks
   superseded (e.g. `legacy-static/`) — flag it, don't remove it.
-- The current linear-scroll section components (`Hero`, `About`, `Projects`,
-  `Experience`, `Achievements`, `Speaking`, `Contact`) represent the *content*
-  that needs a home inside the room, not the final presentation layer. Content
-  data files under `src/data/*.ts` and the `src/types/content.ts` shapes are
-  reusable; the section components that render them as scrolling blocks are
-  expected to be replaced by in-room panels/modals.
-- `ThemeToggle` is a non-functional placeholder (see comment in
-  `src/components/Navbar/ThemeToggle.tsx`) — don't build on it. Time-of-day
-  theming for the room should replace this concept, not extend it.
+- The original linear-scroll section components (`Hero`, `About`, `Projects`,
+  `Experience`, `Achievements`, `Speaking`, `Contact`, `Navbar`, `Footer`,
+  `MainLayout`) have been removed (2026-08-31) now that the room panels cover
+  their content — see [[room_first_visual_version]]-era memory for history.
+  `src/app/page.tsx` renders `Room` directly; there is no separate `/room`
+  preview route anymore. Content data files under `src/data/*.ts` and the
+  `src/types/content.ts` shapes survived the cut and are what the room panels
+  (e.g. `LaptopInterface`, `AboutExperience`) read from.
 - No test suite exists yet (no test script, no Jest/Vitest/Playwright). Build
   (`npm run build`) and lint (`npm run lint`) are the only current
   verification gates — keep both green.
