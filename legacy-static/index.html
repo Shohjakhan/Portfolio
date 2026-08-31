@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Founder & Software Developer</title>
+  <meta name="description" content="Personal portfolio of a young founder and software developer. Building thoughtful products with intention and craft." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── NAVIGATION ─────────────────────────────────────────── -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo" aria-label="Home">Alex</a>
+
+      <nav class="nav__links" aria-label="Primary navigation">
+        <a href="#about"        class="nav__link">About</a>
+        <a href="#projects"     class="nav__link">Projects</a>
+        <a href="#experience"   class="nav__link">Experience</a>
+        <a href="#achievements" class="nav__link">Achievements</a>
+        <a href="#events"       class="nav__link">Events</a>
+        <a href="#contact"      class="nav__link">Contact</a>
+      </nav>
+
+      <div class="nav__actions">
+        <button class="nav__theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Hamburger -->
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="nav__mobile" id="mobile-menu" aria-hidden="true">
+      <a href="#about"        class="nav__mobile-link">About</a>
+      <a href="#projects"     class="nav__mobile-link">Projects</a>
+      <a href="#experience"   class="nav__mobile-link">Experience</a>
+      <a href="#achievements" class="nav__mobile-link">Achievements</a>
+      <a href="#events"       class="nav__mobile-link">Events</a>
+      <a href="#contact"      class="nav__mobile-link">Contact</a>
+    </div>
+  </header>
+
+  <!-- ─── HERO ───────────────────────────────────────────────── -->
+  <section class="hero" id="home" aria-label="Introduction">
+    <div class="hero__inner container">
+
+      <!-- Left -->
+      <div class="hero__content" data-animate="fade-up">
+        <p class="hero__eyebrow">Founder · Software Developer</p>
+
+        <h1 class="hero__headline">
+          Building things<br />
+          <em>worth using.</em>
+        </h1>
+
+        <p class="hero__subline">
+          I design and engineer thoughtful software. From idea to launch — with intention.
+        </p>
+
+        <div class="hero__actions">
+          <a href="#projects" class="btn btn--primary">View Projects</a>
+          <a href="#contact"  class="btn btn--secondary">Get in Touch</a>
+        </div>
+
+        <div class="hero__meta">
+          <span class="hero__status">
+            <span class="status-dot"></span>
+            Open to new opportunities
+          </span>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="hero__portrait-wrap" data-animate="fade-in" data-delay="200">
+        <div class="hero__portrait-bg" aria-hidden="true"></div>
+        <div class="hero__portrait" id="hero-portrait">
+          <div class="portrait-placeholder" aria-label="Portrait placeholder">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="32" cy="24" r="12" stroke="#9B9590" stroke-width="1.5"/>
+              <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#9B9590" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <p>Portrait placeholder</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="hero__scroll" aria-hidden="true">
+      <span class="scroll-label">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ──────────────────────────────────────────────── -->
+  <section class="section" id="about" aria-labelledby="about-heading">
+    <div class="container">
+
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__label">01 — About</p>
+        <h2 class="section__title" id="about-heading">A little about<br /><em>who I am.</em></h2>
+      </div>
+
+      <div class="about__grid">
+        <div class="about__text" data-animate="fade-up" data-delay="100">
+          <p class="about__paragraph">
+            I'm a founder and software developer with a focus on building products that are both technically rigorous and beautifully designed. I believe great software isn't just functional — it's felt.
+          </p>
+          <p class="about__paragraph">
+            My work sits at the intersection of engineering and product thinking. I care deeply about the details others overlook: the transition, the rhythm, the moment a user realizes something just works.
+          </p>
+          <p class="about__paragraph">
+            When I'm not shipping, I'm exploring ideas at the edge of what software can do for people.
+          </p>
+        </div>
+
+        <div class="about__sidebar" data-animate="fade-up" data-delay="200">
+          <div class="about__fact">
+            <p class="fact__label">Based in</p>
+            <p class="fact__value">— Your City, Country</p>
+          </div>
+          <div class="about__fact">
+            <p class="fact__label">Focused on</p>
+            <p class="fact__value">— Product · Engineering</p>
+          </div>
+          <div class="about__fact">
+            <p class="fact__label">Education</p>
+            <p class="fact__value">— Your University</p>
+          </div>
+          <div class="about__fact">
+            <p class="fact__label">Languages</p>
+            <p class="fact__value">— Your Languages</p>
+          </div>
+
+          <div class="about__links">
+            <a href="#" class="about__social-link" id="link-github">GitHub ↗</a>
+            <a href="#" class="about__social-link" id="link-linkedin">LinkedIn ↗</a>
+            <a href="#" class="about__social-link" id="link-twitter">X (Twitter) ↗</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── PROJECTS ───────────────────────────────────────────── -->
+  <section class="section section--alt" id="projects" aria-labelledby="projects-heading">
+    <div class="container">
+
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__label">02 — Projects</p>
+        <h2 class="section__title" id="projects-heading">Selected<br /><em>work.</em></h2>
+      </div>
+
+      <div class="projects__list">
+
+        <article class="project" data-animate="fade-up" data-delay="0">
+          <div class="project__meta">
+            <span class="project__year">2024</span>
+            <span class="project__tag">Product</span>
+          </div>
+          <div class="project__body">
+            <h3 class="project__name">Project Name One</h3>
+            <p class="project__desc">A short description of what this project is about and what problem it solves. Keep it honest and concise.</p>
+            <div class="project__tech">
+              <span>React</span><span>TypeScript</span><span>Node.js</span>
+            </div>
+          </div>
+          <a href="#" class="project__link" id="project-1-link" aria-label="View Project Name One">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="project" data-animate="fade-up" data-delay="80">
+          <div class="project__meta">
+            <span class="project__year">2024</span>
+            <span class="project__tag">Mobile</span>
+          </div>
+          <div class="project__body">
+            <h3 class="project__name">Project Name Two</h3>
+            <p class="project__desc">A short description of what this project does. A crisp, purposeful explanation that respects the reader's time.</p>
+            <div class="project__tech">
+              <span>Flutter</span><span>Dart</span><span>Firebase</span>
+            </div>
+          </div>
+          <a href="#" class="project__link" id="project-2-link" aria-label="View Project Name Two">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="project" data-animate="fade-up" data-delay="160">
+          <div class="project__meta">
+            <span class="project__year">2023</span>
+            <span class="project__tag">Platform</span>
+          </div>
+          <div class="project__body">
+            <h3 class="project__name">Project Name Three</h3>
+            <p class="project__desc">A thoughtful project description. What makes it interesting, what was the challenge, what was the outcome.</p>
+            <div class="project__tech">
+              <span>Python</span><span>FastAPI</span><span>PostgreSQL</span>
+            </div>
+          </div>
+          <a href="#" class="project__link" id="project-3-link" aria-label="View Project Name Three">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="project" data-animate="fade-up" data-delay="240">
+          <div class="project__meta">
+            <span class="project__year">2023</span>
+            <span class="project__tag">Open Source</span>
+          </div>
+          <div class="project__body">
+            <h3 class="project__name">Project Name Four</h3>
+            <p class="project__desc">Another compelling project. Replace these placeholders with real descriptions when you're ready to launch.</p>
+            <div class="project__tech">
+              <span>Go</span><span>Docker</span><span>Kubernetes</span>
+            </div>
+          </div>
+          <a href="#" class="project__link" id="project-4-link" aria-label="View Project Name Four">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── EXPERIENCE ─────────────────────────────────────────── -->
+  <section class="section" id="experience" aria-labelledby="experience-heading">
+    <div class="container">
+
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__label">03 — Experience</p>
+        <h2 class="section__title" id="experience-heading">Where I've<br /><em>contributed.</em></h2>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline__item" data-animate="fade-up" data-delay="0">
+          <div class="timeline__period">
+            <span>2024 — Present</span>
+          </div>
+          <div class="timeline__content">
+            <div class="timeline__header">
+              <h3 class="timeline__role">Founder & CEO</h3>
+              <span class="timeline__company">Your Startup Name</span>
+            </div>
+            <p class="timeline__desc">Brief description of what you built and the impact. Be specific but concise. Replace with real details.</p>
+            <div class="timeline__tags">
+              <span>Product Strategy</span>
+              <span>Engineering</span>
+              <span>Fundraising</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline__item" data-animate="fade-up" data-delay="80">
+          <div class="timeline__period">
+            <span>2023 — 2024</span>
+          </div>
+          <div class="timeline__content">
+            <div class="timeline__header">
+              <h3 class="timeline__role">Software Engineer</h3>
+              <span class="timeline__company">Company Name</span>
+            </div>
+            <p class="timeline__desc">A concise summary of what you worked on, what you shipped, and what you learned.</p>
+            <div class="timeline__tags">
+              <span>Full-Stack</span>
+              <span>System Design</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline__item" data-animate="fade-up" data-delay="160">
+          <div class="timeline__period">
+            <span>2022 — 2023</span>
+          </div>
+          <div class="timeline__content">
+            <div class="timeline__header">
+              <h3 class="timeline__role">Software Engineering Intern</h3>
+              <span class="timeline__company">Another Company</span>
+            </div>
+            <p class="timeline__desc">What you built, what it shipped, what skill you developed. Replace all of this copy with your real experience.</p>
+            <div class="timeline__tags">
+              <span>Backend</span>
+              <span>APIs</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── ACHIEVEMENTS ───────────────────────────────────────── -->
+  <section class="section section--alt" id="achievements" aria-labelledby="achievements-heading">
+    <div class="container">
+
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__label">04 — Achievements</p>
+        <h2 class="section__title" id="achievements-heading">Recognition &<br /><em>milestones.</em></h2>
+      </div>
+
+      <div class="achievements__grid">
+
+        <div class="achievement" data-animate="fade-up" data-delay="0">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2024</p>
+            <h3 class="achievement__name">Achievement or Award Name</h3>
+            <p class="achievement__context">Awarding Body or Competition Name</p>
+          </div>
+        </div>
+
+        <div class="achievement" data-animate="fade-up" data-delay="80">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2024</p>
+            <h3 class="achievement__name">Another Award or Recognition</h3>
+            <p class="achievement__context">Issuing Organization</p>
+          </div>
+        </div>
+
+        <div class="achievement" data-animate="fade-up" data-delay="160">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2023</p>
+            <h3 class="achievement__name">Hackathon Win or Grant</h3>
+            <p class="achievement__context">Event or Program Name</p>
+          </div>
+        </div>
+
+        <div class="achievement" data-animate="fade-up" data-delay="240">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2023</p>
+            <h3 class="achievement__name">Fellowship or Program</h3>
+            <p class="achievement__context">Sponsoring Organization</p>
+          </div>
+        </div>
+
+        <div class="achievement" data-animate="fade-up" data-delay="320">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2023</p>
+            <h3 class="achievement__name">Publication or Press Feature</h3>
+            <p class="achievement__context">Publication Name</p>
+          </div>
+        </div>
+
+        <div class="achievement" data-animate="fade-up" data-delay="400">
+          <div class="achievement__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="achievement__body">
+            <p class="achievement__year">2022</p>
+            <h3 class="achievement__name">Milestone or Notable Launch</h3>
+            <p class="achievement__context">Metric or Platform</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── EVENTS ─────────────────────────────────────────────── -->
+  <section class="section" id="events" aria-labelledby="events-heading">
+    <div class="container">
+
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__label">05 — Events</p>
+        <h2 class="section__title" id="events-heading">Speaking &<br /><em>appearances.</em></h2>
+      </div>
+
+      <div class="events__list">
+
+        <div class="event" data-animate="fade-up" data-delay="0">
+          <div class="event__date">
+            <span class="event__month">Jun</span>
+            <span class="event__day">12</span>
+            <span class="event__year">2025</span>
+          </div>
+          <div class="event__body">
+            <h3 class="event__name">Conference or Event Name</h3>
+            <p class="event__role">Speaker — "Talk Title or Topic"</p>
+            <p class="event__location">City, Country</p>
+          </div>
+          <a href="#" class="event__link" id="event-1-link" aria-label="View Event">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="event" data-animate="fade-up" data-delay="80">
+          <div class="event__date">
+            <span class="event__month">Mar</span>
+            <span class="event__day">28</span>
+            <span class="event__year">2025</span>
+          </div>
+          <div class="event__body">
+            <h3 class="event__name">Another Event or Panel</h3>
+            <p class="event__role">Panelist — "Panel Discussion Topic"</p>
+            <p class="event__location">City, Country</p>
+          </div>
+          <a href="#" class="event__link" id="event-2-link" aria-label="View Event">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="event" data-animate="fade-up" data-delay="160">
+          <div class="event__date">
+            <span class="event__month">Nov</span>
+            <span class="event__day">05</span>
+            <span class="event__year">2024</span>
+          </div>
+          <div class="event__body">
+            <h3 class="event__name">Workshop or Meetup Name</h3>
+            <p class="event__role">Workshop Facilitator</p>
+            <p class="event__location">City, Country</p>
+          </div>
+          <a href="#" class="event__link" id="event-3-link" aria-label="View Event">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ────────────────────────────────────────────── -->
+  <section class="section contact-section" id="contact" aria-labelledby="contact-heading">
+    <div class="container">
+
+      <div class="contact__inner" data-animate="fade-up">
+        <p class="section__label">06 — Contact</p>
+        <h2 class="contact__title" id="contact-heading">Let's build<br /><em>something together.</em></h2>
+        <p class="contact__subline">Whether you have a project in mind, an idea worth exploring, or just want to say hello — my inbox is always open.</p>
+
+        <div class="contact__actions">
+          <a href="mailto:hello@yourdomain.com" class="btn btn--primary" id="contact-email-btn">Say Hello ↗</a>
+          <a href="#" class="btn btn--secondary" id="contact-cv-btn">Download CV</a>
+        </div>
+
+        <div class="contact__channels">
+          <a href="#" class="contact__channel" id="contact-github">GitHub</a>
+          <span class="contact__divider" aria-hidden="true">·</span>
+          <a href="#" class="contact__channel" id="contact-linkedin">LinkedIn</a>
+          <span class="contact__divider" aria-hidden="true">·</span>
+          <a href="#" class="contact__channel" id="contact-twitter">X (Twitter)</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__name">Alex</p>
+      <p class="footer__copy">© 2025. Designed & developed with care.</p>
+      <a href="#home" class="footer__top" id="footer-top" aria-label="Back to top">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+        </svg>
+        Top
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

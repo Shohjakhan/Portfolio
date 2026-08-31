@@ -1,0 +1,14 @@
+<svg width="110" height="90" viewBox="0 0 110 90" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Laptop base and open lid placeholder">
+  <defs>
+    <linearGradient id="lpMetal" x1="0" y1="0" x2="0" y2="90" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8a8a86"/>
+      <stop offset="1" stop-color="#4a4a48"/>
+    </linearGradient>
+  </defs>
+  <!-- lid/bezel: screen area left transparent so laptop-screen.svg composites on top -->
+  <rect x="9" y="4" width="92" height="60" rx="4" fill="#2a2a28" stroke="#111" stroke-width="2"/>
+  <rect x="14" y="9" width="82" height="50" rx="1" fill="#0d0d0f"/>
+  <!-- keyboard deck -->
+  <path d="M2 64 L108 64 L100 86 a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4Z" fill="url(#lpMetal)" stroke="#111" stroke-width="2"/>
+  <rect x="18" y="70" width="74" height="10" rx="2" fill="#33332f" opacity="0.7"/>
+</svg>

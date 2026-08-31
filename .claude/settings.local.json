@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes create-next-app@latest portfolio-next --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --turbopack --yes)",
+      "Bash(mkdir *)",
+      "Bash(npm view *)",
+      "Bash(npm pkg *)",
+      "Bash(npm install *)",
+      "Bash(npx next *)",
+      "Bash(cd *)",
+      "Bash(rm -rf components)",
+      "Bash(mkdir -p components/Navbar components/Hero components/About components/Projects components/Experience components/Achievements components/Speaking components/Contact components/Footer components/Common layouts/MainLayout styles data hooks utils types ../public/images ../public/icons)",
+      "Bash(rm -f ../public/*.svg)",
+      "Bash(touch ../public/images/.gitkeep ../public/icons/.gitkeep)",
+      "Bash(rmdir lib *)",
+      "Bash(mv app/globals.css styles/globals.css)",
+      "Bash(npm run *)",
+      "Bash(npx tsc *)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(npm init *)",
+      "Bash(node shoot.mjs)",
+      "Bash(node shoot-section.mjs)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(grep -o '\"a\",null,{\"className\":\"[^}]*Say Hello[^}]*}')",
+      "Bash(node shoot-button.mjs)",
+      "Bash(node shoot-mobile-menu.mjs)",
+      "Bash(pkill -f \"next start\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"http.server 4000\")",
+      "Bash(rsync -a --exclude node_modules --exclude .next --exclude .git /private/tmp/claude-501/-Users-shohjahon-Development-Portfolio-website/a8779665-76ce-4615-9268-8c0b0e2167fc/scratchpad/portfolio-next/ '/Users/shohjahon/Development/Portfolio website/')",
+      "Bash(ps -p 4961 -o pid,command)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(npm -v)"
+    ]
+  }
+}

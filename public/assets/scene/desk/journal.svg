@@ -1,0 +1,14 @@
+<svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Open journal with pen placeholder">
+  <path d="M4 12c10-4 22-4 36 2 14-6 26-6 36-2v46c-10-4-22-4-36 2-14-6-26-6-36-2Z"
+        fill="#ede3cd" stroke="#1c130c" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M40 14v46" stroke="#5a4028" stroke-width="2"/>
+  <g stroke="#7a6a4f" stroke-width="1.2" opacity="0.7">
+    <path d="M12 20c8-2 16-2 24 1"/>
+    <path d="M12 28c8-2 16-2 24 1"/>
+    <path d="M12 36c8-2 16-2 24 1"/>
+    <path d="M44 21c8-3 16-3 24 1"/>
+    <path d="M44 29c8-3 16-3 24 1"/>
+  </g>
+  <path d="M52 8 L74 28" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M74 28 L78 32" stroke="#1c130c" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coffee cup and saucer placeholder">
+  <ellipse cx="35" cy="58" rx="30" ry="7" fill="#ede3cd" stroke="#1c130c" stroke-width="2"/>
+  <path d="M14 30h34l-3 22a5 5 0 0 1-5 4H22a5 5 0 0 1-5-4L14 30Z" fill="#3a2a1c" stroke="#1c130c" stroke-width="2"/>
+  <ellipse cx="31" cy="30" rx="17" ry="5" fill="#1c130c"/>
+  <ellipse cx="31" cy="29" rx="15" ry="4" fill="#5a3a22"/>
+  <path d="M48 34c8-1 10 9 1 12" stroke="#1c130c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

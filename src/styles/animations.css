@@ -1,0 +1,411 @@
+/**
+ * Keyframes referenced by the `--animate-*` tokens in variables.css,
+ * plus the scroll-reveal transition used by <Reveal />.
+ */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes morph-bg {
+  0% {
+    border-radius: 30% 70% 60% 40% / 40% 50% 60% 50%;
+  }
+  33% {
+    border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+  }
+  66% {
+    border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%;
+  }
+  100% {
+    border-radius: 60% 40% 30% 70% / 40% 50% 70% 40%;
+  }
+}
+
+@keyframes scroll-line {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* --- Room: idle motion -------------------------------------------------
+   Shared keyframes every scene object's idle animation draws from, so
+   "sway", "float", "flicker" etc. mean the same thing everywhere instead
+   of each object inventing its own timing. See docs/adding-interactive-objects.md. */
+/* Amplitude reads --sway-scale (default 1, see variables.css) so the room
+   can nudge "environmental movement" very slightly at later visit stages
+   (see Room/index.tsx) without every object needing its own logic. */
+@keyframes room-sway {
+  0%,
+  100% {
+    transform: rotate(calc(-1.5deg * var(--sway-scale, 1)));
+  }
+  50% {
+    transform: rotate(calc(1.5deg * var(--sway-scale, 1)));
+  }
+}
+
+@keyframes room-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-6px * var(--sway-scale, 1)));
+  }
+}
+
+@keyframes room-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  55% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes room-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+@keyframes room-drift {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--particle-opacity, 0.6);
+  }
+  90% {
+    opacity: var(--particle-opacity, 0.6);
+  }
+  100% {
+    transform: translate(var(--drift-x, 12px), var(--drift-y, -60px));
+    opacity: 0;
+  }
+}
+
+/* Cat's "occasional movement" — a brief stretch/shift layered on top of its
+   continuous breathe loop (see Cat/index.tsx), not a replacement for it.
+   Short and small on purpose: a stir, not a full wake-up pose (that needs a
+   second art asset, see docs/asset-inventory.md). */
+@keyframes cat-stir {
+  0%,
+  100% {
+    transform: rotate(0deg) scaleX(1);
+  }
+  30% {
+    transform: rotate(-2deg) scaleX(1.03);
+  }
+  60% {
+    transform: rotate(1deg) scaleX(0.99);
+  }
+}
+
+/* A single bird's wingbeat + drift — Birds/index.tsx positions several
+   instances at staggered delays/durations along the sky. */
+@keyframes bird-flight {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--bird-opacity, 0.55);
+  }
+  90% {
+    opacity: var(--bird-opacity, 0.55);
+  }
+  100% {
+    transform: translateX(var(--bird-drift-x, 140px)) translateY(var(--bird-drift-y, -18px));
+    opacity: 0;
+  }
+}
+
+@keyframes bird-wingbeat {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.55);
+  }
+}
+
+/* Slow horizontal drift for the window's cloud layer (cloudy/rain weather,
+   see Window/index.tsx) — deliberately just a translateX loop, same
+   "accepted snap-back at the loop point" precedent as room-drift's
+   particles, staggered per-instance via animation-delay so it isn't visible. */
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(-30%);
+  }
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes scene-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scene-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Modal's "memory" variant (see AboutExperience) — a slower, gentler
+ * unfold than the shared scene-fade, so opening it reads as opening
+ * something personal rather than a plain UI panel. Durations are hardcoded
+ * (not a --duration-* token) because Modal.tsx's EXIT_DURATION_MS must
+ * match exactly — keep both in sync if either changes. */
+@keyframes memory-open {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes memory-close {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+
+@layer components {
+  .animate-scene-in {
+    animation: scene-fade-in var(--duration-slow) var(--ease-out-expo) both;
+  }
+  .animate-scene-out {
+    animation: scene-fade-out var(--duration-base) var(--ease-soft) both;
+  }
+  .animate-memory-open {
+    animation: memory-open 650ms var(--ease-out-expo) both;
+  }
+  .animate-memory-close {
+    animation: memory-close 480ms var(--ease-soft) both;
+  }
+
+  .ambient-particle {
+    position: absolute;
+    bottom: 0;
+    border-radius: 999px;
+    background: currentColor;
+    animation: room-drift linear infinite;
+  }
+  [data-variant="dust"] .ambient-particle {
+    color: rgba(255, 236, 200, 0.5);
+    --particle-opacity: 0.35;
+    --drift-y: -120px;
+  }
+  [data-variant="firefly"] .ambient-particle {
+    color: var(--room-lamp-glow);
+    --particle-opacity: 0.8;
+    --drift-y: -90px;
+    box-shadow: 0 0 6px currentColor;
+  }
+  [data-variant="snow"] .ambient-particle {
+    color: #ffffff;
+    --particle-opacity: 0.9;
+    --drift-y: 140px;
+    bottom: auto;
+    top: -10px;
+  }
+  [data-variant="ember"] .ambient-particle {
+    color: #ff8a4c;
+    --particle-opacity: 0.7;
+    --drift-y: -100px;
+  }
+  /* Rain particles are given a non-square width/height by AmbientLayer
+     itself (thin, tall streaks) — this just overrides the shared circular
+     border-radius so they read as streaks, not raindrop dots. */
+  [data-variant="rain"] .ambient-particle {
+    color: rgba(214, 232, 255, 0.55);
+    --particle-opacity: 0.55;
+    --drift-y: 160px;
+    border-radius: 999px / 2px;
+    bottom: auto;
+    top: -20px;
+  }
+}
+
+@layer components {
+  [data-idle="sway"] {
+    animation: room-sway var(--duration-ambient) var(--ease-soft) infinite;
+  }
+  [data-idle="float"] {
+    animation: room-float var(--duration-ambient) var(--ease-soft) infinite;
+  }
+  [data-idle="flicker"] {
+    animation: room-flicker calc(var(--duration-ambient) * 0.8) ease-in-out infinite;
+  }
+  [data-idle="breathe"] {
+    animation: room-breathe var(--duration-ambient) var(--ease-soft) infinite;
+  }
+
+  /* Cat's occasional stir (see useOccasionalTrigger) — applied to the art
+     `<img>` itself, not the InteractiveObject button (which already owns
+     the continuous breathe idle via inline animationDelay/animationDuration
+     — layering a second animation on that same element would collide with
+     those inline styles). The two animations run on separate elements and
+     never conflict. */
+  [data-stir="true"] {
+    animation: cat-stir 1.4s var(--ease-bounce-soft) 1;
+  }
+
+  .bird {
+    position: absolute;
+    animation: bird-flight linear forwards;
+  }
+
+  .window-cloud {
+    position: absolute;
+    animation: cloud-drift linear infinite;
+  }
+
+  /* Coffee's steam layer — always faintly visible, "slightly more visible"
+     (not a fade from nothing) on hover/focus. Plain :hover/:focus-visible on
+     the button itself, same touch-safety characteristics as the
+     [data-hover="x"] rules below (no sustained :hover on tap). */
+  .coffee-steam {
+    opacity: 0.55;
+    transition: opacity var(--duration-slow) var(--ease-soft);
+  }
+  button[data-object="coffee"]:is(:hover, :focus-visible) .coffee-steam {
+    opacity: 0.85;
+  }
+
+  /* Laptop's screen — subtly brighter and the "My Work" glow intensifies
+     on hover/focus, same plain :hover/:focus-visible pattern as the coffee
+     steam above (nothing JS-driven needed). */
+  .laptop-screen {
+    filter: brightness(0.9);
+    transition: filter var(--duration-slow) var(--ease-soft);
+  }
+  button[data-object="laptop"]:is(:hover, :focus-visible) .laptop-screen {
+    filter: brightness(1.3) saturate(1.15);
+  }
+  .laptop-screen-label {
+    opacity: 0.7;
+    transition:
+      opacity var(--duration-slow) var(--ease-soft),
+      text-shadow var(--duration-slow) var(--ease-soft);
+  }
+  button[data-object="laptop"]:is(:hover, :focus-visible) .laptop-screen-label {
+    opacity: 1;
+    text-shadow: 0 0 6px rgba(255, 207, 154, 0.9);
+  }
+
+  .bird::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: currentColor;
+    /* a simple wide "M" wing silhouette via clip-path, cheaper than an SVG asset for something this small */
+    clip-path: polygon(0% 40%, 25% 0%, 50% 35%, 75% 0%, 100% 40%, 50% 70%);
+    animation: bird-wingbeat 0.5s ease-in-out infinite;
+  }
+
+  [data-hover="glow"]:is(:hover, :focus-visible) {
+    filter: drop-shadow(var(--shadow-glow-amber));
+  }
+  [data-hover="tilt"]:is(:hover, :focus-visible) {
+    transform: rotate(-2deg) scale(1.03);
+  }
+  [data-hover="wiggle"]:is(:hover, :focus-visible) {
+    animation: room-sway var(--duration-fast) var(--ease-bounce-soft) 2;
+  }
+  [data-hover="lift"]:is(:hover, :focus-visible) {
+    transform: translateY(-4px) scale(1.02);
+    filter: drop-shadow(var(--shadow-warm-md));
+  }
+
+  /* prefers-reduced-motion is honored at the JS layer (sceneStore.reducedMotion
+     drives data-idle/data-hover removal), this is the CSS-only fallback for
+     anyone bypassing the store, e.g. a static render before hydration. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-idle],
+    [data-hover="wiggle"],
+    [data-stir="true"],
+    .bird,
+    .bird::before,
+    .window-cloud {
+      animation: none !important;
+    }
+    .bird {
+      display: none;
+    }
+  }
+}
+
+@layer base {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 700ms var(--ease-out-expo),
+      transform 700ms var(--ease-out-expo);
+  }
+
+  [data-reveal="fade-in"] {
+    transform: none;
+  }
+
+  [data-reveal-visible] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

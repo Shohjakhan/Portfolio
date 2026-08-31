@@ -1,0 +1,48 @@
+/**
+ * Base type and document rules that aren't expressed well as
+ * one-off Tailwind utility classes.
+ *
+ * Wrapped in Tailwind's `base` layer so utility classes (which live in
+ * the higher-priority `utilities` layer) can still override these —
+ * unlayered CSS would otherwise always win over layered utilities,
+ * regardless of specificity.
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--spacing-nav);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(33, 75, 62, 0.12);
+    color: var(--color-ink);
+  }
+
+  img,
+  svg {
+    display: block;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--room-lamp-glow);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+}

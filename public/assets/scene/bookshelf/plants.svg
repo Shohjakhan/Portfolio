@@ -1,0 +1,15 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Potted plant placeholder">
+  <defs>
+    <linearGradient id="ptLeaf" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4d8a68"/>
+      <stop offset="1" stop-color="#214b3e"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#1c130c" stroke-width="2" stroke-linecap="round" fill="url(#ptLeaf)">
+    <path d="M40 44 C24 40 16 20 22 6 C30 16 36 30 40 44Z"/>
+    <path d="M40 44 C56 40 64 20 58 6 C50 16 44 30 40 44Z"/>
+    <path d="M40 44 C36 26 40 10 40 2 C46 12 44 30 40 44Z"/>
+  </g>
+  <path d="M18 46h44l-5 28a4 4 0 0 1-4 3.5H27a4 4 0 0 1-4-3.5L18 46Z" fill="#a4552e" stroke="#1c130c" stroke-width="2"/>
+  <path d="M16 46h48" stroke="#1c130c" stroke-width="2" stroke-linecap="round"/>
+</svg>

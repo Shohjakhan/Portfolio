@@ -1,0 +1,54 @@
+<svg width="70" height="300" viewBox="0 0 70 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Draped window curtain placeholder (mirror via CSS for the opposite side)">
+  <defs>
+    <linearGradient id="ctFabric" x1="0" y1="0" x2="70" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5c2430"/>
+      <stop offset="0.45" stop-color="#7a3040"/>
+      <stop offset="0.75" stop-color="#8f3a4c"/>
+      <stop offset="1" stop-color="#4a1c26"/>
+    </linearGradient>
+    <linearGradient id="ctShade" x1="0" y1="0" x2="70" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.4"/>
+      <stop offset="0.3" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <!-- rod -->
+  <rect x="-4" y="0" width="78" height="7" rx="2" fill="#2a1f16"/>
+  <circle cx="8" cy="3.5" r="4.5" fill="#3a2a1c" stroke="#1c130c" stroke-width="1"/>
+
+  <!-- gathered fabric body: wavy scalloped hem reads as cloth, not a solid board -->
+  <path d="M6 8
+           C 2 40 12 70 5 100
+           C -1 130 10 160 4 190
+           C -1 215 9 235 6 260
+           Q 4 280 14 288
+           L 20 300
+           L 50 300
+           L 56 288
+           Q 66 280 64 260
+           C 61 235 71 215 66 190
+           C 60 160 71 130 65 100
+           C 58 70 68 40 64 8
+           Z"
+        fill="url(#ctFabric)" stroke="#3a1520" stroke-width="1.5"/>
+
+  <!-- gather folds -->
+  <g stroke="#2e0f18" stroke-width="1" opacity="0.45" fill="none">
+    <path d="M16 10 C 12 60 20 120 14 180 C 10 220 16 260 14 296"/>
+    <path d="M28 9 C 24 60 32 120 26 180 C 22 220 28 260 26 297"/>
+    <path d="M42 9 C 46 60 38 120 44 180 C 48 220 42 260 44 297"/>
+    <path d="M54 10 C 58 60 50 120 56 180 C 60 220 54 260 56 296"/>
+  </g>
+
+  <!-- light/shade pass for volume -->
+  <path d="M6 8 C 2 40 12 70 5 100 C -1 130 10 160 4 190 C -1 215 9 235 6 260 Q 4 280 14 288 L 20 300 L 50 300 L 56 288 Q 66 280 64 260 C 61 235 71 215 66 190 C 60 160 71 130 65 100 C 58 70 68 40 64 8 Z"
+        fill="url(#ctShade)" opacity="0.55"/>
+
+  <!-- tieback with a small bow, roughly 60% down -->
+  <ellipse cx="35" cy="176" rx="22" ry="6" fill="#3a1520" opacity="0.55"/>
+  <path d="M25 174c3-6 12-6 10 2-2 6-10 4-10-2Z" fill="#c9a24a" stroke="#1c130c" stroke-width="1"/>
+  <path d="M45 174c-3-6-12-6-10 2 2 6 10 4 10-2Z" fill="#c9a24a" stroke="#1c130c" stroke-width="1"/>
+  <circle cx="35" cy="176" r="2.4" fill="#e8c878" stroke="#1c130c" stroke-width="1"/>
+</svg>

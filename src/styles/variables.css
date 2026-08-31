@@ -1,0 +1,105 @@
+/**
+ * Design tokens — single source of truth for color, type, and motion.
+ * Exposed to Tailwind via @theme so utilities like `bg-bg-alt`, `text-ink-2`,
+ * `font-serif`, and `ease-out-expo` are generated automatically.
+ */
+@theme {
+  --color-bg: #f7f5f2;
+  --color-bg-alt: #f2efe9;
+  --color-ink: #111111;
+  --color-ink-2: #6d6d6d;
+  --color-ink-3: #9b9590;
+  --color-border: #e8e5e0;
+  --color-accent: #214b3e;
+  --color-accent-hover: #2c6452;
+  --color-accent-light: #eef4f1;
+
+  --font-serif: var(--font-dm-serif), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  /* Room hover-label titles only ("About Me", "My Library", ...) — a
+     flowing calligraphy face, tuned for short one-off text. */
+  --font-hand: var(--font-alex-brush), "Segoe Print", cursive;
+  /* Longer/repeated in-panel handwritten notes (AboutExperience's section
+     tags, personal statement, "back to the room") — plainer and bolder,
+     reads better at smaller sizes and in longer runs than --font-hand does. */
+  --font-hand-note: var(--font-caveat), "Segoe Print", cursive;
+
+  /* Original design's breakpoints don't line up with Tailwind's defaults. */
+  --breakpoint-sm: 520px;
+  --breakpoint-md: 860px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1600px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-bounce-soft: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-pulse-dot: pulse-dot 2.8s ease-in-out infinite;
+  --animate-morph-bg: morph-bg 12s ease-in-out infinite alternate;
+  --animate-scroll-line: scroll-line 1.8s ease-in-out infinite;
+
+  --spacing-nav: 80px;
+
+  /* --- Room: motion timings ---------------------------------------- */
+  /* Reach for these instead of ad-hoc ms values so every object's hover/
+     idle/transition motion reads as one consistent, hand-tuned rhythm. */
+  --duration-instant: 120ms;
+  --duration-fast: 220ms;
+  --duration-base: 400ms;
+  --duration-slow: 700ms;
+  --duration-scene: 1600ms;
+  --duration-ambient: 6000ms;
+
+  /* --- Room: elevation ------------------------------------------------ */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-warm-sm: 0 2px 8px rgba(30, 20, 10, 0.18);
+  --shadow-warm-md: 0 8px 24px rgba(30, 20, 10, 0.28);
+  --shadow-warm-lg: 0 20px 48px rgba(15, 10, 5, 0.4);
+  --shadow-glow-amber: 0 0 24px rgba(255, 191, 110, 0.45);
+
+  /* --- Room: lighting / time-of-day sky -------------------------------
+     Each object reads --room-glow (set on the Room root per time-of-day)
+     rather than knowing about time-of-day itself. Five phases, derived from
+     the visitor's own browser clock — see useLocalTimeOfDay. */
+  --sky-morning-top: #6fa9d8;
+  --sky-morning-bottom: #eaf3e0;
+  --sky-afternoon-top: #4f9bdc;
+  --sky-afternoon-bottom: #cfe9f7;
+  --sky-sunset-top: #4a3a68;
+  --sky-sunset-bottom: #e08a52;
+  --sky-evening-top: #201a3f;
+  --sky-evening-bottom: #40355f;
+  --sky-night-top: #0b1024;
+  --sky-night-bottom: #1c2650;
+
+  --room-wall-dark: #2a2018;
+  --room-wall-warm: #3c2c1e;
+  --room-lamp-glow: #ffb870;
+  --room-moonlight: #7c8fc9;
+
+  /* --- Room: lamp intensity per time-of-day ----------------------------
+     Lamp/index.tsx reads this instead of a fixed glow opacity, so the
+     practical light turns on with the day rather than always being lit.
+     0 = off, 1 = full warm glow. */
+  --lamp-intensity-morning: 0;
+  --lamp-intensity-afternoon: 0;
+  --lamp-intensity-sunset: 0.55;
+  --lamp-intensity-evening: 0.9;
+  --lamp-intensity-night: 1;
+
+  /* Multiplies idle-sway amplitude (see room-sway/room-float keyframes) —
+     nudged slightly above 1 at later visit stages so the room reads as
+     marginally more alive the longer someone stays, never abruptly. */
+  --sway-scale: 1;
+
+  /* --- Room: materials ------------------------------------------------ */
+  --color-paper: #ede3cd;
+  --color-paper-ink: #33291d;
+  --color-wood: #4a3423;
+  --color-wood-dark: #2f2015;
+  --color-cream: #f6ecd9;
+}

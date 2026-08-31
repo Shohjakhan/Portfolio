@@ -1,0 +1,124 @@
+/**
+ * Custom cursor: the native pointer is hidden via [data-custom-cursor] and
+ * replaced by the feather rendered in <CustomCursor>. Position/rotation are
+ * driven imperatively (direct style mutation on a ref, see the component)
+ * so this file only owns the one-off transient effects — trail dot fade,
+ * click ripple, hover sparkle — plus the cursor:none swap itself.
+ */
+@layer base {
+  html[data-custom-cursor="true"] * {
+    cursor: none !important;
+  }
+
+  /* Text-entry fields keep the real text-beam cursor — CustomCursor hides
+     its own feather over these (variant "text"), so without this rule
+     there would be no cursor at all while typing. */
+  html[data-custom-cursor="true"] input,
+  html[data-custom-cursor="true"] textarea,
+  html[data-custom-cursor="true"] [contenteditable="true"] {
+    cursor: text !important;
+  }
+
+  html[data-custom-cursor="true"] input[type="checkbox"],
+  html[data-custom-cursor="true"] input[type="radio"],
+  html[data-custom-cursor="true"] input[type="range"],
+  html[data-custom-cursor="true"] input[type="button"],
+  html[data-custom-cursor="true"] input[type="submit"] {
+    cursor: none !important;
+  }
+}
+
+@keyframes cursor-trail-fade {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+}
+
+@keyframes cursor-ripple-expand {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.4);
+  }
+}
+
+@keyframes cursor-sparkle-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-10deg);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1) rotate(6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) rotate(10deg);
+  }
+}
+
+@layer components {
+  /* Extremely subtle magical trail — a few soft amber motes fading in the
+     feather's wake while it moves, never while it's resting or hovering. */
+  .cursor-trail-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--room-lamp-glow);
+    box-shadow: 0 0 4px var(--room-lamp-glow);
+    animation: cursor-trail-fade 650ms var(--ease-soft) forwards;
+  }
+
+  .cursor-ripple {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    border: 1px solid var(--room-lamp-glow);
+    animation: cursor-ripple-expand 480ms var(--ease-out-expo) forwards;
+  }
+
+  .cursor-sparkle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    animation: cursor-sparkle-pop 420ms var(--ease-bounce-soft) both;
+  }
+  .cursor-sparkle::before,
+  .cursor-sparkle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    background: var(--room-lamp-glow);
+    border-radius: 999px;
+  }
+  .cursor-sparkle::before {
+    width: 2px;
+    height: 10px;
+  }
+  .cursor-sparkle::after {
+    width: 10px;
+    height: 2px;
+  }
+
+  /* CSS-only fallback for anyone bypassing the store (mirrors the same
+     pattern in animations.css) — the JS layer also gates these off via
+     sceneStore.reducedMotion, this just covers the gap before hydration. */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-trail-dot,
+    .cursor-ripple,
+    .cursor-sparkle {
+      animation: none !important;
+      display: none;
+    }
+  }
+}

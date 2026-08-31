@@ -1,0 +1,77 @@
+/**
+ * Flat, dependency-free stand-ins for paper / wood / cream materials —
+ * layered gradients only, no image assets. Swap for painted textures
+ * later without touching the components that reference these classes.
+ */
+@layer components {
+  .texture-paper {
+    background-color: var(--color-paper);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(51, 41, 29, 0.04) 0px,
+        rgba(51, 41, 29, 0.04) 1px,
+        transparent 1px,
+        transparent 3px
+      ),
+      radial-gradient(120% 140% at 20% 0%, rgba(255, 255, 255, 0.25), transparent 60%);
+    color: var(--color-paper-ink);
+  }
+
+  .texture-wood {
+    background-color: var(--color-wood);
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.12) 0px,
+        transparent 2px,
+        transparent 14px,
+        rgba(0, 0, 0, 0.08) 16px
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 30%);
+  }
+
+  .texture-wood-dark {
+    background-color: var(--color-wood-dark);
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.18) 0px,
+        transparent 2px,
+        transparent 16px,
+        rgba(0, 0, 0, 0.12) 18px
+      );
+  }
+
+  .texture-cream {
+    background-color: var(--color-cream);
+    background-image: radial-gradient(160% 120% at 50% -10%, rgba(255, 255, 255, 0.5), transparent 60%);
+  }
+
+  /* The laptop interface's "screen" — a dark, warm CRT-ish surface rather
+     than the paper-note materials everything else in the room uses, so
+     opening the laptop reads as looking at a machine, not a page. Faint
+     scanlines + a soft amber glow from the bottom, echoing --room-lamp-glow. */
+  .texture-screen {
+    background-color: #1c1712;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px),
+      radial-gradient(120% 70% at 50% 115%, rgba(255, 184, 112, 0.16), transparent 60%),
+      radial-gradient(90% 60% at 50% -10%, rgba(255, 255, 255, 0.05), transparent 60%);
+    color: var(--color-cream);
+  }
+
+  /* The laptop's actual desktop surface — a real photographic wallpaper
+     (AI-generated, matching the room's warm palette) rather than a flat CSS
+     gradient, so the "My Work" panel reads as an actual Mac desktop behind
+     the menu bar and folder icons. A soft uniform scrim keeps icon labels
+     and window chrome legible against it without muddying the image. */
+  .texture-desktop-wallpaper {
+    background-image:
+      linear-gradient(rgba(10, 8, 6, 0.28), rgba(10, 8, 6, 0.28)), url("/assets/scene/desk/laptop-wallpaper.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--color-cream);
+  }
+}

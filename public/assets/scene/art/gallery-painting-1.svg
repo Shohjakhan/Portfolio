@@ -1,0 +1,16 @@
+<svg width="70" height="100" viewBox="0 0 70 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Framed painting placeholder">
+  <defs>
+    <linearGradient id="pgFrame" x1="0" y1="0" x2="70" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c9a24a"/>
+      <stop offset="1" stop-color="#7a5a24"/>
+    </linearGradient>
+    <linearGradient id="pgScene" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3d4f8a"/>
+      <stop offset="1" stop-color="#9a6a45"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="66" height="96" rx="2" fill="url(#pgFrame)" stroke="#1c130c" stroke-width="2"/>
+  <rect x="9" y="9" width="52" height="82" fill="url(#pgScene)"/>
+  <path d="M9 68 L24 46 L34 58 L46 40 L61 68Z" fill="#2c3b2c" opacity="0.85"/>
+  <circle cx="46" cy="22" r="5" fill="#f3d38a" opacity="0.9"/>
+</svg>

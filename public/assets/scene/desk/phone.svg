@@ -1,0 +1,23 @@
+<svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Retro rotary phone placeholder">
+  <defs>
+    <radialGradient id="phBrass" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#8a6a3f"/>
+      <stop offset="1" stop-color="#3a2a1c"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="45" cy="76" rx="34" ry="8" fill="#2a1f14" opacity="0.5"/>
+  <rect x="18" y="60" width="54" height="14" rx="4" fill="url(#phBrass)" stroke="#1c130c" stroke-width="2"/>
+  <circle cx="45" cy="42" r="30" fill="url(#phBrass)" stroke="#1c130c" stroke-width="2.5"/>
+  <circle cx="45" cy="42" r="21" fill="#2a1f14" stroke="#1c130c" stroke-width="1.5"/>
+  <g fill="#ede3cd">
+    <circle cx="45" cy="26" r="2.6"/>
+    <circle cx="58" cy="32" r="2.6"/>
+    <circle cx="58" cy="52" r="2.6"/>
+    <circle cx="45" cy="58" r="2.6"/>
+    <circle cx="32" cy="52" r="2.6"/>
+    <circle cx="32" cy="32" r="2.6"/>
+  </g>
+  <path d="M20 10c14-8 36-8 50 0" stroke="#1c130c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <rect x="12" y="4" width="18" height="9" rx="3" fill="url(#phBrass)" stroke="#1c130c" stroke-width="2"/>
+  <rect x="60" y="4" width="18" height="9" rx="3" fill="url(#phBrass)" stroke="#1c130c" stroke-width="2"/>
+</svg>

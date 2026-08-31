@@ -1,0 +1,13 @@
+<svg width="76" height="96" viewBox="0 0 76 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Painting on canvas placeholder">
+  <defs>
+    <linearGradient id="cvSky" x1="0" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3d4f8a"/>
+      <stop offset="1" stop-color="#c98a5e"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="72" height="92" rx="2" fill="#efe6d2" stroke="#5a4028" stroke-width="4"/>
+  <rect x="8" y="8" width="60" height="60" fill="url(#cvSky)"/>
+  <path d="M8 58 L26 34 L38 50 L50 30 L68 58 Z" fill="#2c3b2c"/>
+  <path d="M8 68 L68 68 L68 80 L8 80 Z" fill="#3a6e57"/>
+  <circle cx="52" cy="20" r="6" fill="#f3d38a"/>
+</svg>
