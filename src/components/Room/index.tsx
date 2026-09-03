@@ -2,6 +2,7 @@
 
 import { useRef, type ComponentType, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { AmbientEffects } from "@/components/AmbientEffects";
+import { ArtWall } from "@/components/ArtWall";
 import { AudioControls } from "@/components/AudioControls";
 import { Bookshelf } from "@/components/Bookshelf";
 import { Cat } from "@/components/Cat";
@@ -17,13 +18,18 @@ import { NavigationLayer } from "@/components/NavigationLayer";
 import { Phone } from "@/components/Phone";
 import { Plants } from "@/components/Plants";
 import { Plushie } from "@/components/Plushie";
+import { MobileRoom } from "@/components/Room/MobileRoom";
 import { Window } from "@/components/Window";
+import { useAmbientAudio } from "@/hooks/useAmbientAudio";
+import { useAudioPreference } from "@/hooks/useAudioPreference";
 import { useLocalTimeOfDay } from "@/hooks/useLocalTimeOfDay";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useViewportTier } from "@/hooks/useViewportTier";
 import { useVisitProgress } from "@/hooks/useVisitProgress";
 import { ParallaxLayer } from "@/primitives/ParallaxLayer";
 import { useSceneValue } from "@/state/sceneStore";
 import type { TimeOfDay, VisitStage } from "@/types/scene";
+import { cn } from "@/utils/cn";
 
 /** Warm light the lamp/window casts into the room per time of day — objects
  * that want to react to lighting read `var(--room-glow)` rather than
@@ -77,6 +83,7 @@ const OBJECT_SLOTS: ObjectSlot[] = [
   { key: "cat", depth: 0.45, box: { left: "11.5%", top: "2%", width: "clamp(84px, 9.5%, 140px)", height: "clamp(60px, 7%, 102px)" }, Component: Cat },
 
   // --- lower left: easel + paintings + brushes ---------------------------
+  { key: "artWall", depth: 0.25, box: { left: "18%", top: "8%", width: "clamp(96px, 12%, 160px)", height: "clamp(150px, 28%, 230px)" }, Component: ArtWall },
   { key: "easel", depth: 0.42, box: { left: "21%", top: "44%", width: "clamp(84px, 9.5%, 140px)", height: "clamp(170px, 32%, 280px)" }, Component: Easel },
 
   // --- right: memories wall, movie poster, lamp, phone, plushie ----------
@@ -100,22 +107,49 @@ const CURTAIN_SLOTS: ObjectSlot[] = [
 ];
 
 /**
- * Composition root for the illustrated room. Owns the one thing every
- * object needs but shouldn't own itself: layout (each slot's position/depth)
- * and the pointer-driven parallax signal. Everything else — hover, idle
- * motion, opening a panel — lives on the object components themselves, so
- * adding a new object never means touching this file's rendering logic,
- * only adding one slot. See docs/adding-interactive-objects.md.
+ * Composition root for the illustrated room. Owns the things every object
+ * needs but shouldn't own itself: layout (each slot's position/depth), the
+ * pointer-driven parallax signal, and — per the responsive brief this was
+ * built against ("do not simply shrink the desktop room onto a phone") —
+ * *which* layout renders at all. `useViewportTier()` picks between two
+ * genuinely different trees, not one tree at different sizes:
+ *
+ * - **`"desktop"` and `"tablet"`** share this file's absolute-positioned
+ *   canvas (`OBJECT_SLOTS`/`CURTAIN_SLOTS`, parallax, the desk-plane and
+ *   vignette overlays). Tablet doesn't get a separate composition of its
+ *   own — every slot is already `clamp()`-scaled across a wide size range
+ *   with a touch-friendly floor (see `ObjectSlot`'s own doc comment), and
+ *   hover vs. tap is already decided per-device by `useCursorSupport`'s
+ *   `(pointer: fine) and (hover: hover)` check, not by viewport width — an
+ *   iPad with a trackpad gets real hover, a touch-only one doesn't,
+ *   automatically. That's "simplified but still immersive... preserve
+ *   major objects" without needing a third bespoke layout to maintain.
+ * - **`"mobile"`** renders `MobileRoom` instead — a different, purpose-
+ *   built vertical composition (see its own doc comment for the full
+ *   reasoning). This file still owns the shared chrome around it
+ *   (background texture, `NavigationLayer`, `AudioControls`) so panels and
+ *   the sound toggle behave identically regardless of which room renders.
+ *
+ * Everything else — hover, idle motion, opening a panel — lives on the
+ * object components themselves, so adding a new object never means
+ * touching this file's canvas rendering logic, only adding one slot (and,
+ * separately, a spot in `MobileRoom`'s vignettes). See
+ * docs/adding-interactive-objects.md.
  */
 export function Room() {
   usePrefersReducedMotion();
   useLocalTimeOfDay();
   useVisitProgress();
+  useAudioPreference();
+  useAmbientAudio();
+  const tier = useViewportTier();
+  const isMobile = tier === "mobile";
   const timeOfDay = useSceneValue((state) => state.timeOfDay);
   const visitStage = useSceneValue((state) => state.visitStage);
   const stageRef = useRef<HTMLDivElement>(null);
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (isMobile) return;
     const stage = stageRef.current;
     if (!stage) return;
     const rect = stage.getBoundingClientRect();
@@ -126,6 +160,7 @@ export function Room() {
   };
 
   const handlePointerLeave = () => {
+    if (isMobile) return;
     stageRef.current?.style.setProperty("--pointer-x", "0");
     stageRef.current?.style.setProperty("--pointer-y", "0");
   };
@@ -135,7 +170,23 @@ export function Room() {
       ref={stageRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      className="texture-wood-dark relative h-screen min-h-[560px] w-full overflow-hidden"
+      className={cn(
+        "texture-wood-dark relative w-full",
+        // Desktop/tablet: one viewport-locked stage — the canvas is laid
+        // out in percentages of exactly this box, so horizontal overflow
+        // stays clipped (nothing should ever need to scroll sideways to
+        // reach an object). Vertical is `auto`, not `hidden`, specifically
+        // for a short viewport (a phone/small tablet in landscape can be
+        // under 560px tall) where `min-h-[560px]` makes this box taller
+        // than the actual viewport — `hidden` would silently clip the
+        // bottom of the room; `auto` lets it scroll into view instead, and
+        // is a no-op (no scrollbar, identical to `hidden`) whenever the
+        // viewport is already ≥560px tall, which is every normal case.
+        // Mobile: natural content height, no clipping either axis —
+        // `MobileRoom` is meant to be scrolled top to bottom (see
+        // "scrolling is intentional" in the responsive brief).
+        isMobile ? "min-h-screen overflow-x-hidden" : "h-screen min-h-[560px] overflow-x-hidden overflow-y-auto",
+      )}
       style={
         {
           "--room-glow": ROOM_GLOW[timeOfDay],
@@ -144,54 +195,60 @@ export function Room() {
         } as CSSProperties
       }
     >
-      {/* desk plane — a lighter, horizontally-grained band so the lower
-          third of the room reads as a tabletop, not more wall */}
-      <ParallaxLayer depth={0.05} className="absolute inset-x-0 bottom-0 h-[38%]">
-        <div
-          aria-hidden
-          className="texture-wood h-full w-full"
-          style={{ boxShadow: "0 2px 0 rgba(255, 255, 255, 0.08) inset, 0 40px 70px -30px rgba(0, 0, 0, 0.5) inset" }}
-        />
-      </ParallaxLayer>
+      {isMobile ? (
+        <MobileRoom />
+      ) : (
+        <>
+          {/* desk plane — a lighter, horizontally-grained band so the lower
+              third of the room reads as a tabletop, not more wall */}
+          <ParallaxLayer depth={0.05} className="absolute inset-x-0 bottom-0 h-[38%]">
+            <div
+              aria-hidden
+              className="texture-wood h-full w-full"
+              style={{ boxShadow: "0 2px 0 rgba(255, 255, 255, 0.08) inset, 0 40px 70px -30px rgba(0, 0, 0, 0.5) inset" }}
+            />
+          </ParallaxLayer>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: "radial-gradient(60% 50% at 50% 84%, var(--room-glow), transparent 70%)",
-          filter: "brightness(var(--glow-boost, 1))",
-          transition: "background var(--duration-scene) var(--ease-soft), filter var(--duration-scene) var(--ease-soft)",
-        }}
-      />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: "radial-gradient(60% 50% at 50% 84%, var(--room-glow), transparent 70%)",
+              filter: "brightness(var(--glow-boost, 1))",
+              transition: "background var(--duration-scene) var(--ease-soft), filter var(--duration-scene) var(--ease-soft)",
+            }}
+          />
 
-      <ParallaxLayer depth={0.1} className="absolute inset-0">
-        <Window />
-      </ParallaxLayer>
+          <ParallaxLayer depth={0.1} className="absolute inset-0">
+            <Window />
+          </ParallaxLayer>
 
-      {CURTAIN_SLOTS.map(({ key, depth, box, Component }) => (
-        <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
-          <Component />
-        </ParallaxLayer>
-      ))}
+          {CURTAIN_SLOTS.map(({ key, depth, box, Component }) => (
+            <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
+              <Component />
+            </ParallaxLayer>
+          ))}
 
-      {OBJECT_SLOTS.map(({ key, depth, box, Component }) => (
-        <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
-          <Component />
-        </ParallaxLayer>
-      ))}
+          {OBJECT_SLOTS.map(({ key, depth, box, Component }) => (
+            <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
+              <Component />
+            </ParallaxLayer>
+          ))}
 
-      <AmbientEffects />
+          <AmbientEffects />
+
+          {/* cinematic edge vignette — keeps the corners of a full-viewport
+              scene from feeling like a flat rectangle of wallpaper */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{ background: "radial-gradient(120% 100% at 50% 42%, transparent 55%, rgba(0, 0, 0, 0.45) 100%)" }}
+          />
+        </>
+      )}
+
       <NavigationLayer />
-
-      {/* cinematic edge vignette — keeps the corners of a full-viewport
-          scene from feeling like a flat rectangle of wallpaper */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(120% 100% at 50% 42%, transparent 55%, rgba(0, 0, 0, 0.45) 100%)" }}
-      />
-
-      <AudioControls className="absolute right-4 top-4 z-20" />
+      <AudioControls className={isMobile ? "fixed right-4 top-4 z-20" : "absolute right-4 top-4 z-20"} />
     </div>
   );
 }

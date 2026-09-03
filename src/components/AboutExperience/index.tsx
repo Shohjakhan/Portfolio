@@ -1,4 +1,5 @@
 import { UserRound } from "lucide-react";
+import { BackLink } from "@/components/shared/BackLink";
 import { aboutExperience } from "@/data/aboutExperience";
 
 interface AboutExperienceProps {
@@ -64,7 +65,7 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
         </div>
         <div>
           <p className="font-serif text-lg text-[var(--color-paper-ink)]">{name}</p>
-          <p className="text-sm text-[var(--color-paper-ink)]/60">{role}</p>
+          <p className="text-sm text-[var(--color-paper-ink)]/70">{role}</p>
         </div>
       </div>
 
@@ -79,7 +80,7 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
         <div>
           <SectionTag>what I study &amp; do</SectionTag>
           <p className="mt-1.5 font-serif text-[0.95rem] leading-relaxed text-[var(--color-paper-ink)]/85">{whatIDo}</p>
-          {education ? <p className="mt-1.5 text-xs text-[var(--color-paper-ink)]/55">{education}</p> : null}
+          {education ? <p className="mt-1.5 text-xs text-[var(--color-paper-ink)]/70">{education}</p> : null}
         </div>
 
         <div>
@@ -113,14 +114,14 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
         </blockquote>
       ) : (
         <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-paper-ink)]/25 px-4 py-3">
-          <p className="font-serif text-sm italic text-[var(--color-paper-ink)]/55">
+          <p className="font-serif text-sm italic text-[var(--color-paper-ink)]/70">
             A short personal statement will live here — a line or two, in my own words.
           </p>
         </div>
       )}
 
       {basedIn || languages ? (
-        <p className="text-xs text-[var(--color-paper-ink)]/50 italic">
+        <p className="text-xs text-[var(--color-paper-ink)]/70 italic">
           {[basedIn, languages].filter(Boolean).join(" · ")}
         </p>
       ) : null}
@@ -149,13 +150,7 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="self-start font-hand-note text-xl text-[var(--color-paper-ink)]/60 transition-colors duration-[var(--duration-fast)] hover:text-[var(--color-accent)]"
-      >
-        ← back to the room
-      </button>
+      <BackLink onClick={onClose} />
     </div>
   );
 }

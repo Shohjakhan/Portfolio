@@ -1,0 +1,19 @@
+<svg width="70" height="100" viewBox="0 0 70 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Framed still-life painting placeholder">
+  <defs>
+    <linearGradient id="pg3Frame" x1="0" y1="0" x2="70" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5f7a4a"/>
+      <stop offset="1" stop-color="#2e3a20"/>
+    </linearGradient>
+    <linearGradient id="pg3Scene" x1="0" y1="0" x2="0" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e8dcc0"/>
+      <stop offset="1" stop-color="#b89a6a"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="66" height="96" rx="2" fill="url(#pg3Frame)" stroke="#1c130c" stroke-width="2"/>
+  <rect x="9" y="9" width="52" height="82" fill="url(#pg3Scene)"/>
+  <ellipse cx="35" cy="70" rx="20" ry="6" fill="#6b4a3a" opacity="0.5"/>
+  <path d="M26 70 C26 50 30 38 35 30 C40 38 44 50 44 70 Z" fill="#7a5540"/>
+  <circle cx="35" cy="26" r="6" fill="#8a6b4a"/>
+  <path d="M22 44 C18 40 18 32 24 30 C26 36 25 42 22 44Z" fill="#5f6b3f" opacity="0.85"/>
+  <path d="M48 44 C52 40 52 32 46 30 C44 36 45 42 48 44Z" fill="#5f6b3f" opacity="0.85"/>
+</svg>

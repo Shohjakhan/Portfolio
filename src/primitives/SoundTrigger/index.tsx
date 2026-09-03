@@ -1,24 +1,29 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSceneValue } from "@/state/sceneStore";
+import type { InteractionCueId } from "@/lib/audio/cues";
+import { audioManager } from "@/lib/audio/manager";
 
 export interface SoundTriggerProps {
-  /** Path to an audio file, e.g. "/sounds/page-turn.mp3". */
-  src: string;
+  /** A cue id from `lib/audio/cues.ts`'s `INTERACTION_CUES` — not a raw
+   * file path; the catalog is the one place a cue's file/volume/cooldown
+   * live (see its own doc comment). */
+  cue: InteractionCueId;
   /** Play a hit whenever this value changes — pass a click counter, a boolean pulse, etc. */
   trigger: unknown;
-  volume?: number;
 }
 
 /**
- * Headless — renders nothing, just plays `src` when `trigger` changes,
- * gated on the scene's global audioEnabled flag (see AudioControls). Skips
- * the mount itself so opening with a truthy initial trigger doesn't play.
+ * Headless — renders nothing, just asks `audioManager` to play `cue`
+ * whenever `trigger` changes. All the actual gating (on/off, cooldown,
+ * concurrency cap, reduced-motion) lives in the manager, not here — this
+ * is only the "value changed" → "play" wiring for the cases where a
+ * component doesn't already have a direct event handler to call the
+ * manager from (see `BookReader`/`PlainBook`'s page index, `Phone`'s ring
+ * count). Skips the mount itself so opening with a truthy initial trigger
+ * doesn't play.
  */
-export function SoundTrigger({ src, trigger, volume = 0.5 }: SoundTriggerProps) {
-  const audioEnabled = useSceneValue((state) => state.audioEnabled);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+export function SoundTrigger({ cue, trigger }: SoundTriggerProps) {
   const hasMounted = useRef(false);
 
   useEffect(() => {
@@ -26,14 +31,7 @@ export function SoundTrigger({ src, trigger, volume = 0.5 }: SoundTriggerProps) 
       hasMounted.current = true;
       return;
     }
-    if (!audioEnabled) return;
-
-    audioRef.current ??= new Audio(src);
-    audioRef.current.volume = volume;
-    audioRef.current.currentTime = 0;
-    void audioRef.current.play().catch(() => {
-      // Autoplay can still be blocked by the browser; failing silently is fine here.
-    });
+    audioManager.playInteraction(cue);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fire only on `trigger` changes
   }, [trigger]);
 

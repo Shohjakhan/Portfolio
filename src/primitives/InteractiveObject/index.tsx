@@ -1,6 +1,8 @@
 "use client";
 
 import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import type { InteractionCueId } from "@/lib/audio/cues";
+import { audioManager } from "@/lib/audio/manager";
 import { HoverLabel, type HoverLabelPlacement } from "@/primitives/HoverLabel";
 import { sceneActions, useSceneValue } from "@/state/sceneStore";
 import type { SceneObjectId } from "@/types/scene";
@@ -20,11 +22,20 @@ export interface InteractiveObjectProps {
   onActivate: () => void;
   idleAnimation?: IdleAnimation;
   hoverEffect?: HoverEffect;
+  /** Cue played on hover-enter/focus (see `lib/audio/manager.ts`) —
+   * "magical hover sparkle" by default so every object gets it for free,
+   * same as `hoverEffect`. Override for an object whose hover reads as
+   * something more specific than generic magic (Journal's page-skew
+   * hover uses `"paperRustle"` instead — see `components/Journal`). */
+  hoverSound?: InteractionCueId;
   /** Staggers this object's idle animation against every other object's, so a
    * room full of "breathe"/"sway" objects doesn't pulse in visible unison. */
   idleDelayMs?: number;
   idleDurationMs?: number;
   labelPlacement?: HoverLabelPlacement;
+  /** Passed through to `HoverLabel` — see its doc comment for when an
+   * object needs this (a box taller/wider than its actual art). */
+  labelStyle?: CSSProperties;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -42,10 +53,14 @@ export interface InteractiveObjectProps {
  *   per the design brief every real object should set one.
  * - **HOVER** (mirrors keyboard focus — pointer and keyboard users get the
  *   identical reaction) — `hoverEffect` drives the object's own
- *   glow/tilt/wiggle/lift, `HoverLabel` shows the handwritten callout, and
- *   the feather cursor's scale/glow/sparkle reaction (`CustomCursor`,
- *   `cursorStore`) happens automatically for any real `<button>` — this
- *   component renders one, so no extra wiring is needed per object.
+ *   glow/tilt/wiggle/lift, `HoverLabel` shows the handwritten callout,
+ *   `hoverSound` plays through `audioManager` (gated on sound being on;
+ *   see the manager's own cooldown/concurrency limits for why a rapid
+ *   sweep across several objects doesn't turn into overlapping noise),
+ *   and the feather cursor's
+ *   scale/glow/sparkle reaction (`CustomCursor`, `cursorStore`) happens
+ *   automatically for any real `<button>` — this component renders one,
+ *   so no extra wiring is needed per object.
  * - **OPEN** — `onActivate` fires on click *or* Enter/Space (native button
  *   semantics, not a custom key handler), normally opening `Modal` via
  *   `sceneActions.openPanel`, which owns its own smooth entrance/exit
@@ -63,9 +78,11 @@ export function InteractiveObject({
   onActivate,
   idleAnimation = "none",
   hoverEffect = "glow",
+  hoverSound = "hoverSparkle",
   idleDelayMs = 0,
   idleDurationMs,
   labelPlacement = "top",
+  labelStyle,
   className,
   style,
   children,
@@ -80,6 +97,7 @@ export function InteractiveObject({
   const setActive = (active: boolean) => {
     setIsLocalActive(active);
     sceneActions.setActiveObject(active ? id : null);
+    if (active) audioManager.playInteraction(hoverSound);
   };
 
   return (
@@ -108,7 +126,13 @@ export function InteractiveObject({
           {description}
         </span>
       </button>
-      <HoverLabel label={label} description={description} visible={isLocalActive} placement={labelPlacement} />
+      <HoverLabel
+        label={label}
+        description={description}
+        visible={isLocalActive}
+        placement={labelPlacement}
+        style={labelStyle}
+      />
     </div>
   );
 }

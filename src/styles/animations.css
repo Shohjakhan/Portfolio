@@ -73,6 +73,69 @@
   }
 }
 
+/* Anime & Manga's charm rack — each charm hangs from a string and sways
+ * gently, `transform-origin: top center` set via the `.charm-swing`
+ * class (not here) so it pivots from the string, not its own center. */
+@keyframes charm-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+/* Contact phone: a barely-there tremble on the base+dial at rest — "the
+ * telephone feels physically present," not a flat sticker. Amplitude is
+ * intentionally tiny (well under the ring shake below) so it never reads
+ * as already ringing. */
+@keyframes phone-idle-tremble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(0.6deg);
+  }
+}
+
+/* Contact phone: the cord's own gentle sway, independent of the handset
+ * — "the cable has a natural shape," not a rigid static line. */
+@keyframes phone-cord-sway {
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+/* Contact phone: picking up rings the bell a couple of short times rather
+ * than one abrupt jolt, so it reads as an actual ring, not a glitch —
+ * settles back to rotate(0) by the midpoint, while the handset (animated
+ * separately, see `.phone-handset-layer.is-ringing`) is still lifting. */
+@keyframes phone-ring {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-2.5deg);
+  }
+  20% {
+    transform: rotate(2.5deg);
+  }
+  30% {
+    transform: rotate(-2deg);
+  }
+  40% {
+    transform: rotate(2deg);
+  }
+}
+
 @keyframes room-flicker {
   0%,
   100% {
@@ -224,6 +287,148 @@
   }
 }
 
+/* Library (Bookshelf → "My Library"): a book "opening" — its cover swings
+ * up and away from the left edge (transform-origin set in BookFrame.tsx)
+ * while the pages beneath fade up into place, rather than a plain fade.
+ * `--book-tilt` lets each of the three books open at a very slightly
+ * different angle (set inline per book) so they don't feel identical. */
+@keyframes book-open {
+  0% {
+    opacity: 0;
+    transform: perspective(1400px) rotateY(calc(-38deg * var(--book-tilt, 1))) translateX(-2%) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1400px) rotateY(0deg) translateX(0) scale(1);
+  }
+}
+
+/* A page turning — SceneTransition's "page-turn" variant. Not currently
+ * used by BookReader (see page-flip-forward/backward below for that — a
+ * real two-layer flip needs both an outgoing and incoming element at
+ * once, which this enter-only remount can't do), kept as a general-
+ * purpose primitive variant for a future single-layer content swap. */
+@keyframes page-turn {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(-14deg);
+    transform-origin: left center;
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg);
+    transform-origin: left center;
+  }
+}
+
+/* BookReader/PlainBook's real page flip: the OUTGOING spread is rendered
+ * a second time into an overlay sitting on top of the already-current new
+ * one, then rotates away on the spine like an actual sheet lifting and
+ * turning — so what's revealed is the real next page, not a cross-fade
+ * pretending to be one. The overlay covers the *whole* two-page spread
+ * (see `PlainBook`/`BookReader`'s visible spine divider at the element's
+ * horizontal center), so the rotation has to pivot from that same center
+ * — `transform-origin: center` on `.page-flip-leaf-forward/-backward`
+ * below — not an outer edge; pivoting from an outer edge instead rotates
+ * the whole spread like a door hinged on its far side, not a page turning
+ * at the binding. Direction only changes which way `rotateY` turns, not
+ * the pivot point. Three keyframes (not two) so the midpoint — the page
+ * edge-on to the viewer, near-invisible, shadow at its darkest — actually
+ * reads as a fold rather than a fast simultaneous rotate+fade that's easy
+ * to miss; opacity only drops in the back half, once the page has visibly
+ * turned. (A `scaleX`-pinch + `filter: brightness` "curl" was tried here
+ * once to sell a less-rigid page — reverted, it read as broken rather
+ * than curled. Plain `rotateY` only.) */
+@keyframes page-flip-forward {
+  0% {
+    transform: rotateY(0deg);
+    box-shadow: -22px 0 36px rgba(0, 0, 0, 0.4);
+    opacity: 1;
+  }
+  55% {
+    transform: rotateY(-98deg);
+    box-shadow: -6px 0 48px rgba(0, 0, 0, 0.55);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-175deg);
+    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+  }
+}
+
+@keyframes page-flip-backward {
+  0% {
+    transform: rotateY(0deg);
+    box-shadow: 22px 0 36px rgba(0, 0, 0, 0.4);
+    opacity: 1;
+  }
+  55% {
+    transform: rotateY(98deg);
+    box-shadow: 6px 0 48px rgba(0, 0, 0, 0.55);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(175deg);
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+  }
+}
+
+/* ArtGallery: "artwork slides forward" when moving to the next/previous
+ * piece — walks in from one side and settles slightly enlarged, as if
+ * stepping toward the viewer, rather than a flat cross-fade. Direction-
+ * aware like the library's page flip (see `SceneTransition`'s
+ * "artwork-forward"/"artwork-backward" variant). */
+@keyframes artwork-slide-forward {
+  0% {
+    transform: translateX(52px) scale(0.94);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes artwork-slide-backward {
+  0% {
+    transform: translateX(-52px) scale(0.94);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ArtGallery: "lighting changes around the selected artwork" — the
+ * spotlight glow behind the current frame breathes in gently on every
+ * change, rather than snapping to full intensity instantly. */
+@keyframes gallery-spotlight-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ArtGallery: clicking a piece on the salon wall opens it big — a quick
+ * pop toward the viewer, not a hard cut. */
+@keyframes gallery-lightbox-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @layer components {
   .animate-scene-in {
     animation: scene-fade-in var(--duration-slow) var(--ease-out-expo) both;
@@ -236,6 +441,122 @@
   }
   .animate-memory-close {
     animation: memory-close 480ms var(--ease-soft) both;
+  }
+  .animate-book-open {
+    animation: book-open 600ms var(--ease-out-expo) both;
+  }
+  .animate-page-turn {
+    animation: page-turn 420ms var(--ease-out-expo) both;
+  }
+
+  /* BookReader's flip overlay — an opaque "leaf" the same paper color as
+     the page beneath it, so mid-flip it fully occludes the new content
+     until it's rotated far enough to reveal it (like a real page, not a
+     transparent ghost). `backface-visibility: hidden` keeps its own
+     re-rendered content from flashing mirror-reversed past 90deg. */
+  .page-flip-leaf {
+    background: var(--color-paper);
+    backface-visibility: hidden;
+    pointer-events: none;
+  }
+  .page-flip-leaf-forward {
+    transform-origin: center;
+    animation: page-flip-forward 780ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+  .page-flip-leaf-backward {
+    transform-origin: center;
+    animation: page-flip-backward 780ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+
+  .animate-artwork-forward {
+    animation: artwork-slide-forward 520ms var(--ease-out-expo) both;
+  }
+  .animate-artwork-backward {
+    animation: artwork-slide-backward 520ms var(--ease-out-expo) both;
+  }
+
+  /* The frame's own cast shadow — shifts (grows + darkens) on hover/focus,
+     "frame shadows shift" from the brief, independent of whichever
+     enter animation is currently playing. */
+  .gallery-frame {
+    box-shadow: 0 18px 40px -10px rgba(0, 0, 0, 0.6);
+    transition: box-shadow var(--duration-slow) var(--ease-soft);
+  }
+  .gallery-frame:hover,
+  .gallery-frame:focus-visible {
+    box-shadow: 0 26px 60px -8px rgba(0, 0, 0, 0.75);
+  }
+
+  /* The warm glow behind the current piece — "lighting changes around the
+     selected artwork." Re-keyed per artwork (see ArtGallery) so it
+     re-plays its gentle bloom-in on every change rather than sitting static. */
+  .gallery-spotlight {
+    animation: gallery-spotlight-in 700ms var(--ease-soft) both;
+  }
+
+  .animate-gallery-lightbox-in {
+    animation: gallery-lightbox-in 380ms var(--ease-out-expo) both;
+  }
+
+  /* A piece hanging on the wall, unopened — lifts slightly and its own
+     frame casts a stronger shadow on hover, same physical-feedback
+     language as `.gallery-frame`'s hover state. No rotation, on purpose —
+     a real gallery hangs pieces level; a CSS Grid item (see
+     GalleryWall.tsx) so position comes from the grid's own dense
+     auto-placement, not an inline transform, and only `z-index` needs
+     bumping on hover so the lift doesn't tuck under a denser neighbor. */
+  .gallery-wall-piece {
+    position: relative;
+    transition:
+      transform var(--duration-base) var(--ease-bounce-soft),
+      filter var(--duration-base) var(--ease-soft);
+  }
+  .gallery-wall-piece:hover,
+  .gallery-wall-piece:focus-visible {
+    z-index: 1;
+    transform: translateY(-6px) scale(1.06);
+    filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.5));
+  }
+
+  /* Anime & Manga's charm rack — each charm pivots from the string it
+     hangs by, not its own center, so the sway reads as swinging rather
+     than spinning in place. */
+  .charm-swing {
+    transform-origin: top center;
+    animation: charm-sway 4.5s var(--ease-soft) infinite;
+  }
+
+  /* Contact phone's three independent layers (see `Phone/index.tsx`):
+     the base+dial tremble very faintly at rest; the cord sways on its
+     own; the handset rests until hover (a small preview nudge) or a
+     real click (`.is-ringing`, applied only while `ringing` is true —
+     lifts further and holds, transition-based so it settles smoothly
+     rather than snapping). `.phone-ring` goes on the whole composite
+     (`LayeredArt`'s own wrapper), so the base+handset+cord all shake
+     together while the handset's *own* transform layers an extra lift
+     on top — two independent transforms compose correctly since one is
+     the parent's, one is the child's own. */
+  .phone-idle-tremble {
+    animation: phone-idle-tremble 5s var(--ease-soft) infinite;
+  }
+  .phone-ring {
+    animation: phone-ring 700ms var(--ease-soft);
+  }
+  .phone-cord-layer {
+    transform-origin: 45% 15%;
+    animation: phone-cord-sway 5s var(--ease-soft) infinite;
+  }
+  .phone-handset-layer {
+    transform-origin: 30% 45%;
+    transition: transform var(--duration-base) var(--ease-bounce-soft);
+  }
+  [data-object="phone"]:hover .phone-handset-layer,
+  [data-object="phone"]:focus-visible .phone-handset-layer {
+    transform: translateY(-4px) rotate(-5deg);
+  }
+  .phone-handset-layer.is-ringing {
+    transition: transform 260ms var(--ease-bounce-soft);
+    transform: translateY(-16px) rotate(-20deg);
   }
 
   .ambient-particle {
@@ -348,6 +669,56 @@
     text-shadow: 0 0 6px rgba(255, 207, 154, 0.9);
   }
 
+  /* Bookshelf's "subtle book movement" — each row of books nudges up and
+     tilts slightly on hover/focus, independent of (and layered on top of)
+     the whole bookshelf's own `hoverEffect="tilt"` reaction. Staggered via
+     `--book-row-delay` (set inline per layer in Bookshelf/index.tsx) so
+     the three rows don't move in perfect unison. */
+  .bookshelf-books-layer {
+    transform: scaleX(var(--book-flip, 1));
+    transition: transform var(--duration-base) var(--ease-bounce-soft);
+    transition-delay: var(--book-row-delay, 0ms);
+  }
+  button[data-object="bookshelf"]:is(:hover, :focus-visible) .bookshelf-books-layer {
+    transform: translateY(-3px) rotate(calc(-1deg * var(--book-flip, 1))) scaleX(var(--book-flip, 1));
+  }
+
+  /* Easel's "painting/light reacts" — the in-progress canvas catches warm
+     light on hover/focus, independent of the whole easel's own
+     `hoverEffect="tilt"`. The brushes' own continuous idle sway already
+     covers "brush moves subtly" (true whenever it's visible, hover or
+     not) — no separate hover rule needed there, and adding one on the
+     same transform property would fight the running sway animation. */
+  .easel-canvas-layer {
+    transition: filter var(--duration-slow) var(--ease-soft);
+  }
+  button[data-object="easel"]:is(:hover, :focus-visible) .easel-canvas-layer {
+    filter: brightness(1.18) saturate(1.15) drop-shadow(0 0 10px rgba(255, 191, 110, 0.4));
+  }
+
+  /* Journal's "pages subtly move / pen reacts" — two independent layers
+   * (see components/Journal) so the diary brief's two hover cues read as
+   * genuinely separate reactions, not one object-wide wiggle. Pages skew
+   * faintly like a top sheet lifting; the pen tilts up and catches a soft
+   * ink-glint as if just picked up. */
+  .journal-pages-layer {
+    transition: transform var(--duration-slow) var(--ease-soft);
+    transform-origin: left center;
+  }
+  button[data-object="journal"]:is(:hover, :focus-visible) .journal-pages-layer {
+    transform: skewY(-1.5deg) translateY(-1px);
+  }
+  .journal-pen-layer {
+    transition:
+      transform var(--duration-slow) var(--ease-soft),
+      filter var(--duration-slow) var(--ease-soft);
+    transform-origin: 22% 12%;
+  }
+  button[data-object="journal"]:is(:hover, :focus-visible) .journal-pen-layer {
+    transform: rotate(-8deg) translateY(-2px);
+    filter: drop-shadow(0 0 4px rgba(201, 162, 74, 0.7));
+  }
+
   .bird::before {
     content: "";
     display: block;
@@ -382,11 +753,33 @@
     [data-stir="true"],
     .bird,
     .bird::before,
-    .window-cloud {
+    .window-cloud,
+    .animate-book-open,
+    .animate-page-turn,
+    .page-flip-leaf-forward,
+    .page-flip-leaf-backward,
+    .animate-artwork-forward,
+    .animate-artwork-backward,
+    .gallery-spotlight,
+    .animate-gallery-lightbox-in,
+    .charm-swing,
+    .phone-idle-tremble,
+    .phone-ring,
+    .phone-cord-layer {
       animation: none !important;
     }
     .bird {
       display: none;
+    }
+    .page-flip-leaf {
+      display: none;
+    }
+    .bookshelf-books-layer,
+    .gallery-frame,
+    .gallery-wall-piece,
+    .journal-pages-layer,
+    .journal-pen-layer {
+      transition: none;
     }
   }
 }

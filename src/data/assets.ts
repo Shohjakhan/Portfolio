@@ -131,11 +131,18 @@ export const objectAssets: ObjectAssetEntry[] = [
     category: "desk",
     layers: [
       {
-        src: "/assets/scene/desk/journal.svg",
+        src: "/assets/scene/desk/journal-pages.svg",
         width: 80,
         height: 70,
-        motion: "idle-css",
-        note: "Single layer; page-flutter would be a future state-swap variant, not required now.",
+        motion: "hover-reactive",
+        note: "Ruled pages; skews faintly like a top sheet lifting on hover/focus (.journal-pages-layer in animations.css).",
+      },
+      {
+        src: "/assets/scene/desk/journal-pen.svg",
+        width: 30,
+        height: 28,
+        motion: "hover-reactive",
+        note: "Pen, cropped tight and positioned via its own box over the pages layer; tilts up with an ink-glint on hover/focus (.journal-pen-layer), independent of the pages' own motion.",
       },
     ],
   },

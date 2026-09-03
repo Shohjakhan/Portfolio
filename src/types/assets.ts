@@ -17,8 +17,15 @@ import type { SceneObjectId } from "@/types/scene";
  * clickable, same as `Window`. `plushie` was in this same boat until it was
  * registered as a real `SceneObjectId` (see `sceneObjects.ts`, panel
  * "writings"). See docs/asset-architecture.md § Missing assets.
+ *
+ * `cat`/`plants` joined this list later, the other direction from
+ * `plushie` — they *were* registered `SceneObjectId`s (piggybacking on the
+ * "about" panel) and were deliberately un-registered per explicit
+ * feedback: hovering/clicking something that reads as decorative
+ * shouldn't open an unrelated panel. Their art still needs an asset
+ * entry, they're just not clickable.
  */
-export type PendingObjectId = "lamp";
+export type PendingObjectId = "lamp" | "cat" | "plants";
 
 export type AssetObjectId = SceneObjectId | PendingObjectId;
 

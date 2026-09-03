@@ -29,7 +29,7 @@ public/assets/scene/
 ├── window/       cloud.svg, curtain.svg — sky dressing around the window
 ├── bookshelf/    bookshelf-frame.svg, bookshelf-books.svg, cat.svg, plants.svg
 ├── art/          easel-frame.svg, easel-canvas.svg, easel-brushes.svg, gallery-painting-1.svg
-├── desk/         laptop-base.svg, laptop-screen.svg, coffee-cup.svg, coffee-steam.svg, journal.svg, phone.svg
+├── desk/         laptop-base.svg, laptop-screen.svg, coffee-cup.svg, coffee-steam.svg, journal-pages.svg, journal-pen.svg, phone.svg
 ├── decor/        lamp.svg, plushie.svg, movie-poster.svg, photo-frame.svg
 └── ambient/      reserved, empty — dust/firefly/snow/ember particles are CSS (AmbientLayer), not images
 ```
@@ -122,8 +122,8 @@ reconsidered later, this is where its art would go.
 | Laptop screen | `desk/laptop-screen.svg` | **No** — flat constellation graphic | Yes | Yes, hover-reactive (brightness on hover/focus) | Yes | 82×50 | Own layer. Text moved out to a real DOM overlay (2026-08-31, "My Work" laptop interface task) — the SVG itself no longer carries any copy |
 | Coffee cup | `desk/coffee-cup.svg` | **No** | Yes | Yes | Yes | 70×70 | Own layer — steam split out below (2026-08-31, the "About Me" entrance task) |
 | Coffee steam | `desk/coffee-steam.svg` | **No** — same flat-vector caveat as everything else | Yes | Yes, hover-reactive (opacity 0.55→0.85, `.coffee-steam` in animations.css) | Yes | 70×70, same viewBox as the cup so it overlays exactly | Own layer, idle `sway` |
-| Journal | `desk/journal.svg` | **No** | Yes | Yes | Yes | 80×70 | Single |
-| Phone (rotary) | `desk/phone.svg` | **No** — reference's phone is an ornate brass/bakelite object, current version is a flat circle+rect | Yes | Yes | Yes | 90×90 | Single |
+| Journal | `desk/journal-pages.svg`, `desk/journal-pen.svg` | **No** | Yes | Yes — pen is its own hover-reactive layer (tilts + ink-glint on hover/focus, independent of the pages' own skew, see `Journal/index.tsx`) | Yes | 80×70 pages, 30×28 pen (cropped, positioned via its own box) | Split into 2 own layers (2026-09-03, the "Find me elsewhere" diary task) — was `desk/journal.svg`, a single file, kept on disk per the don't-delete convention (now orphaned, same as `gallery-painting-1.svg` above) |
+| Phone (rotary) | `desk/phone-base.svg`, `desk/phone-handset.svg`, `desk/phone-cord.svg` | **No** — reference's phone is an ornate brass/bakelite object, current version is flat shapes in the same style as before | Yes | Yes — handset is its own hover/click-reactive layer (lifts on hover, lifts further + rings on click, see `Phone/index.tsx`) | Yes | 90×90 each, same viewBox so they overlay exactly | Split into 3 own layers (2026-09-01, the "Contact" phone-interaction task) — was `desk/phone.svg`, a single file, kept on disk per the don't-delete convention (now orphaned, same as `gallery-painting-1.svg` above). No new art style was introduced, same flat brass-gradient shapes just reorganized into layers — the only genuinely new geometry is the cord path (`phone-cord.svg`), required by the task brief and not present in the original at all |
 
 ## Decor
 

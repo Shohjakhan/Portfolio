@@ -32,9 +32,9 @@ export function MenuBar() {
     <div className="flex items-center justify-between border-b border-white/10 bg-black/35 px-4 py-1.5 text-xs text-[var(--color-cream)]/80">
       <div className="flex items-center gap-4">
         <span className="font-serif text-[var(--color-cream)]">✧ Shohjahon</span>
-        <span className="hidden text-[var(--color-cream)]/45 sm:inline">Finder</span>
+        <span className="hidden text-[var(--color-cream)]/70 sm:inline">Finder</span>
       </div>
-      <span className="tabular-nums text-[var(--color-cream)]/55">{time}</span>
+      <span className="tabular-nums text-[var(--color-cream)]/70">{time}</span>
     </div>
   );
 }

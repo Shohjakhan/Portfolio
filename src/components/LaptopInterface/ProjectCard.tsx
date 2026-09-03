@@ -29,7 +29,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <p className="mt-2 text-sm leading-relaxed text-[var(--color-cream)]/75">{project.description}</p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {project.stack.map((tech) => (
-          <span key={tech} className="rounded border border-white/10 px-2 py-0.5 text-[0.7rem] text-[var(--color-cream)]/60">
+          <span key={tech} className="rounded border border-white/10 px-2 py-0.5 text-[0.7rem] text-[var(--color-cream)]/70">
             {tech}
           </span>
         ))}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { getPanel } from "@/data/sceneObjects";
 import { sceneActions } from "@/state/sceneStore";
 import type { PanelId } from "@/types/scene";
 
@@ -12,8 +13,24 @@ import type { PanelId } from "@/types/scene";
  * in-content "back to the room" link) just leaves that entry inert —
  * pressing Back afterward is then a normal, harmless one-step navigation
  * back past it, not a special case to handle.
+ *
+ * Also restores from `location.hash` once, on mount — a direct link/bookmark
+ * to `#contact`, or a refresh while a panel was open, opens that same panel
+ * instead of silently dropping back to the bare room with a now-inert hash
+ * in the address bar. `getPanel` doubles as validation: an unrecognized or
+ * missing hash just leaves the room closed, never a crash.
  */
 export function usePanelHistorySync(activePanelId: PanelId | null) {
+  const hasRestored = useRef(false);
+
+  useEffect(() => {
+    if (hasRestored.current) return;
+    hasRestored.current = true;
+
+    const hash = window.location.hash.slice(1) as PanelId;
+    if (hash && getPanel(hash)) sceneActions.openPanel(hash);
+  }, []);
+
   useEffect(() => {
     if (!activePanelId) return;
 

@@ -7,8 +7,18 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cursorActions, resolveCursorVariant, useCursorValue } from "@/state/cursorStore";
 import { useSceneValue } from "@/state/sceneStore";
 
-/** Quill's resting tilt, and how far movement is allowed to nudge it either way — kept small so it reads as a natural wrist tilt, not a weathervane. */
-const REST_TILT_DEG = -38;
+/** Quill's resting tilt, and how far movement is allowed to nudge it either
+ * way — kept small so it reads as a natural wrist tilt, not a weathervane.
+ * The nib (tip, the actual click point) sits at the SVG's `transformOrigin`
+ * and stays fixed under the pointer; this rotates the vane around it. The
+ * unrotated vane's far end points roughly 41° east of north (up-and-right,
+ * see the SVG path below) — 94° of clockwise rotation from there lands the
+ * far end at a bearing of 135° (south-east, down-and-right), the same
+ * "tip upper-left, body trailing lower-right" silhouette a regular system
+ * pointer has, just feather-shaped. (Previously -38°, which put the far
+ * end at ~3° — almost due north/straight up — reading as an odd upward
+ * spike rather than a tilted pointer.) */
+const REST_TILT_DEG = 94;
 const MAX_DYNAMIC_TILT_DEG = 14;
 /** 0..1 follow smoothing per frame — high enough to feel responsive, low enough to carry a touch of trailing weight. */
 const FOLLOW_EASE = 0.35;
@@ -249,9 +259,9 @@ export function CustomCursor() {
           />
         ))}
 
-      {/* Hook for later audio integration — silent until both an audio file
-          exists at this path and the user opts into sound via AudioControls. */}
-      <SoundTrigger src="/sounds/quill-tap.mp3" trigger={clickSeq} volume={0.2} />
+      {/* Silent until both an audio file exists at this cue's path (see
+          lib/audio/cues.ts) and the user opts into sound via AudioControls. */}
+      <SoundTrigger cue="featherClick" trigger={clickSeq} />
     </>
   );
 }

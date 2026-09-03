@@ -9,9 +9,9 @@ export function AchievementItem({ achievement }: { achievement: Achievement }) {
         <Icon size={16} strokeWidth={1.75} aria-hidden />
       </div>
       <div className="min-w-0">
-        <p className="text-[0.7rem] tracking-[0.06em] text-[var(--color-cream)]/45 uppercase">{achievement.year}</p>
+        <p className="text-[0.7rem] tracking-[0.06em] text-[var(--color-cream)]/70 uppercase">{achievement.year}</p>
         <h3 className="mt-0.5 text-sm leading-snug text-[var(--color-cream)]">{achievement.name}</h3>
-        <p className="mt-1 text-xs text-[var(--color-cream)]/60">{achievement.context}</p>
+        <p className="mt-1 text-xs text-[var(--color-cream)]/70">{achievement.context}</p>
       </div>
     </article>
   );

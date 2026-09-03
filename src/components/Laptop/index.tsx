@@ -1,6 +1,7 @@
 "use client";
 
 import { getSceneObject } from "@/data/sceneObjects";
+import { audioManager } from "@/lib/audio/manager";
 import { InteractiveObject } from "@/primitives/InteractiveObject";
 import { sceneActions } from "@/state/sceneStore";
 
@@ -18,7 +19,10 @@ export function Laptop() {
       id={definition.id}
       label={definition.label}
       description={definition.description}
-      onActivate={() => sceneActions.openPanel(definition.panel)}
+      onActivate={() => {
+        audioManager.playInteraction("laptopClick");
+        sceneActions.openPanel(definition.panel);
+      }}
       idleAnimation="flicker"
       idleDelayMs={3400}
       hoverEffect="glow"

@@ -13,6 +13,15 @@ const STAGE_PARTICLE_MULTIPLIER: Record<VisitStage, number> = {
   lateVisitor: 1.6,
 };
 
+interface AmbientEffectsProps {
+  /** Extra multiplier on top of the visit-stage one — `MobileRoom` passes
+   * `0.5` for "Mobile: simplified animations": fewer particles animating
+   * at once is a real, deliberate simplification (less to paint per
+   * frame on typically less powerful hardware), not a visual regression,
+   * since these are already purely decorative (`aria-hidden`) atmosphere. */
+  density?: number;
+}
+
 /**
  * Picks which ambient particle variant matches the room's current weather
  * and time-of-day, so individual scenes don't each hardcode one. Weather
@@ -21,12 +30,12 @@ const STAGE_PARTICLE_MULTIPLIER: Record<VisitStage, number> = {
  * particle variant (it's a sky/window change, see Window/index.tsx), so it
  * falls through to the time-of-day default.
  */
-export function AmbientEffects() {
+export function AmbientEffects({ density = 1 }: AmbientEffectsProps) {
   const timeOfDay = useSceneValue((state) => state.timeOfDay);
   const weather = useSceneValue((state) => state.weather);
   const visitStage = useSceneValue((state) => state.visitStage);
 
-  const multiplier = STAGE_PARTICLE_MULTIPLIER[visitStage];
+  const multiplier = STAGE_PARTICLE_MULTIPLIER[visitStage] * density;
   const scaled = (base: number) => Math.round(base * multiplier);
 
   let variant: AmbientVariant;

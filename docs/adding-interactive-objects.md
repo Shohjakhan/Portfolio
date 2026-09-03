@@ -144,21 +144,62 @@ You don't need to add any of this yourself — if you find yourself writing a
 `useState` for hover or an `onKeyDown` handler on an object, that's a sign
 to go through `InteractiveObject` instead.
 
-## 5. Sound (optional, not wired up yet)
+## 5. Sound
 
-`SoundTrigger` (`src/primitives/SoundTrigger`) plays a sound file whenever a
-value you pass it changes, gated on `sceneStore.audioEnabled` (toggled by
-`AudioControls`). No audio assets exist in `public/` yet — don't reference a
-sound file until one is actually added, or playback will silently fail (by
-design: `SoundTrigger` swallows the play() rejection).
+Every sound in the room goes through `lib/audio/manager.ts`'s `audioManager`
+— never a bare `new Audio()` in a component. It's the one place that knows
+about on/off state, per-cue cooldowns (so a rapid hover/click spree can't
+turn into overlapping noise), a global concurrency cap, and — for ambient
+loops — crossfading instead of hard-cutting. `lib/audio/cues.ts` is the
+catalog: every cue's file path, volume, and (for interaction cues) cooldown
+live there, keyed by a typed cue id, the same "one place that says what
+backs a thing" pattern `data/assets.ts` uses for visual layers.
 
-```tsx
-const [clickCount, setClickCount] = useState(0);
-// ...
-onActivate={() => { setClickCount((n) => n + 1); sceneActions.openPanel(definition.panel); }}
-// ...
-<SoundTrigger src="/sounds/record-scratch.mp3" trigger={clickCount} />
-```
+**No audio files exist under `public/sounds/` yet.** Every cue already
+resolves to a 404 — by design, this is silent, never a thrown error
+(`AudioManager.playInteraction` swallows the rejection) — so wiring a new
+object's sound ahead of the real file landing is expected, not a bug to
+avoid.
+
+Two ways to trigger a cue, pick whichever matches how your object already
+knows something happened:
+
+- **You already have a direct event handler** (a click, a `useEffect` on
+  mount) — call the manager straight from it:
+
+  ```tsx
+  onActivate={() => {
+    audioManager.playInteraction("recordScratch");
+    sceneActions.openPanel(definition.panel);
+  }}
+  ```
+
+- **You only have a value that changes** (an index, a counter something
+  else already tracks) — use `SoundTrigger`, which plays a cue whenever its
+  `trigger` prop changes and skips the component's own first mount:
+
+  ```tsx
+  <SoundTrigger cue="recordScratch" trigger={clickCount} />
+  ```
+
+  Only reach for `SoundTrigger` when the component holding the sound is
+  **long-lived** (mounted once, its trigger value changes over time — e.g.
+  `Modal`, `Phone`'s ring count). If the component itself gets a fresh
+  mount every time the meaningful moment happens (a book opening, keyed
+  fresh per book in `BookshelfLibrary`), `SoundTrigger`'s "skip first
+  mount" behavior would skip the *only* mount that ever happens — call
+  `audioManager.playInteraction(...)` directly from a plain
+  `useEffect(() => {...}, [])` instead (see `BookFrame`).
+
+Every hoverable object already gets a hover cue for free via
+`InteractiveObject`'s `hoverSound` prop (defaults to `"hoverSparkle"`) — only
+override it if an object's hover reads as something more specific than
+generic magic (see `Journal`'s `hoverSound="paperRustle"`).
+
+A brand-new cue needs an entry in `lib/audio/cues.ts`'s `INTERACTION_CUES`
+(or `AMBIENT_CUES` for a looping bed) before either pattern above will
+type-check — that's the point: nothing plays a raw path a component made up
+on the spot.
 
 ## What the panel shows
 

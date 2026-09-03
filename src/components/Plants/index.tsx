@@ -1,30 +1,23 @@
 "use client";
 
-import { getSceneObject } from "@/data/sceneObjects";
-import { InteractiveObject } from "@/primitives/InteractiveObject";
-import { sceneActions } from "@/state/sceneStore";
-
-const definition = getSceneObject("plants")!;
-
+/**
+ * Purely environmental, like `Curtain`/`Window` — quiet greenery on top
+ * of the bookshelf, not a clickable object. No hover label, no
+ * click-to-panel (it never had a real destination of its own; it was
+ * piggybacking on the "about" panel, which read as a false affordance —
+ * same fix applied to `Cat`). Idle sway stays; only the interactivity
+ * is gone.
+ */
 export function Plants() {
   return (
-    <InteractiveObject
-      id={definition.id}
-      label={definition.label}
-      description={definition.description}
-      onActivate={() => sceneActions.openPanel(definition.panel)}
-      idleAnimation="sway"
-      idleDelayMs={900}
-      idleDurationMs={6500}
-      hoverEffect="wiggle"
-      className="h-full w-full"
-    >
+    <div aria-hidden className="h-full w-full">
       <img
         src="/assets/scene/bookshelf/plants.svg"
         alt=""
-        aria-hidden
+        data-idle="sway"
+        style={{ animationDelay: "900ms", animationDuration: "6500ms" }}
         className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
       />
-    </InteractiveObject>
+    </div>
   );
 }

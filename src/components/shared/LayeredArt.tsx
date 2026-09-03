@@ -9,6 +9,8 @@ export interface ArtLayer {
   idle?: Exclude<IdleAnimation, "none">;
   /** Extra inline style — mainly for staggering `animationDelay` across layers. */
   style?: CSSProperties;
+  /** Opt a layer into a CSS hover rule scoped to the parent object's `data-object` button (e.g. `.bookshelf-books-layer`). */
+  className?: string;
 }
 
 export interface LayeredArtProps {
@@ -36,7 +38,7 @@ export function LayeredArt({ aspect, layers, className }: LayeredArtProps) {
           alt=""
           aria-hidden
           data-idle={layer.idle}
-          className={cn("absolute", layer.box ? undefined : "inset-0 h-full w-full")}
+          className={cn("absolute", layer.box ? undefined : "inset-0 h-full w-full", layer.className)}
           style={{
             ...(layer.box ? { left: layer.box.left, top: layer.box.top, width: layer.box.width, height: layer.box.height } : undefined),
             ...layer.style,

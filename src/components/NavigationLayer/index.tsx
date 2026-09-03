@@ -1,7 +1,14 @@
 "use client";
 
 import { AboutExperience } from "@/components/AboutExperience";
+import { ArtGallery } from "@/components/ArtGallery";
+import { BookshelfLibrary } from "@/components/BookshelfLibrary";
+import { CinemaTickets } from "@/components/CinemaTickets";
+import { ContactExperience } from "@/components/ContactExperience";
+import { FandomCorner } from "@/components/FandomCorner";
+import { JournalDiary } from "@/components/JournalDiary";
 import { LaptopInterface } from "@/components/LaptopInterface";
+import { MemoriesGallery } from "@/components/MemoriesGallery";
 import { getPanel } from "@/data/sceneObjects";
 import { usePanelHistorySync } from "@/hooks/usePanelHistorySync";
 import { Modal } from "@/primitives/Modal";
@@ -10,12 +17,11 @@ import { sceneActions, useSceneValue } from "@/state/sceneStore";
 /**
  * Single modal host for every object's destination panel — objects only
  * ever call `sceneActions.openPanel`, and this is the one place that turns
- * that state into UI. Most panel bodies are still placeholders until each
- * existing section's content is migrated in (see
- * docs/adding-interactive-objects.md); "about" (`AboutExperience`) and
- * "work" (`LaptopInterface`) are the first two with a real, finished
- * experience — a template for migrating the rest, not special cases to
- * keep growing here.
+ * that state into UI. Every panel has a real, finished experience: "about"
+ * (`AboutExperience`), "work" (`LaptopInterface`), "writings"
+ * (`BookshelfLibrary`), "art" (`ArtGallery`), "notes" (`JournalDiary`),
+ * "memories" (`MemoriesGallery`), "movies" (`CinemaTickets`), "fandom"
+ * (`FandomCorner`), "contact" (`ContactExperience`).
  */
 export function NavigationLayer() {
   const activePanelId = useSceneValue((state) => state.activePanel);
@@ -24,6 +30,13 @@ export function NavigationLayer() {
 
   const isAbout = activePanelId === "about";
   const isWork = activePanelId === "work";
+  const isWritings = activePanelId === "writings";
+  const isArt = activePanelId === "art";
+  const isNotes = activePanelId === "notes";
+  const isMemories = activePanelId === "memories";
+  const isMovies = activePanelId === "movies";
+  const isFandom = activePanelId === "fandom";
+  const isContact = activePanelId === "contact";
 
   return (
     <Modal
@@ -31,19 +44,36 @@ export function NavigationLayer() {
       onClose={sceneActions.closePanel}
       title={panel?.title ?? ""}
       subtitle={panel?.subtitle}
-      variant={isAbout ? "memory" : isWork ? "screen" : "fade"}
-      className={isWork ? "max-w-6xl p-4 sm:p-6" : undefined}
+      variant={
+        isAbout || isWritings || isNotes || isMemories || isMovies || isFandom || isContact
+          ? "memory"
+          : isWork
+            ? "screen"
+            : isArt
+              ? "gallery"
+              : "fade"
+      }
+      className={isWork || isWritings || isArt || isMemories ? "max-w-6xl p-4 sm:p-6" : undefined}
     >
       {isAbout ? (
         <AboutExperience onClose={sceneActions.closePanel} />
       ) : isWork ? (
         <LaptopInterface />
-      ) : (
-        <p className="text-sm leading-relaxed text-[var(--color-paper-ink)]/80">
-          This panel will hold the {panel?.title.toLowerCase()} content once it moves in from the existing
-          section components.
-        </p>
-      )}
+      ) : isWritings ? (
+        <BookshelfLibrary onClose={sceneActions.closePanel} />
+      ) : isArt ? (
+        <ArtGallery onClose={sceneActions.closePanel} />
+      ) : isNotes ? (
+        <JournalDiary onClose={sceneActions.closePanel} />
+      ) : isMemories ? (
+        <MemoriesGallery onClose={sceneActions.closePanel} />
+      ) : isMovies ? (
+        <CinemaTickets onClose={sceneActions.closePanel} />
+      ) : isFandom ? (
+        <FandomCorner onClose={sceneActions.closePanel} />
+      ) : isContact ? (
+        <ContactExperience onClose={sceneActions.closePanel} />
+      ) : null}
     </Modal>
   );
 }

@@ -13,6 +13,12 @@ import type { PanelDefinition, SceneObjectDefinition } from "@/types/scene";
  * story, my journey"), and a sighted visitor gets a more inviting cue than
  * a plain object label. Don't drift the two apart into a third "display
  * name" — one string, two jobs, is the whole point.
+ *
+ * Not every object in the room is here — `Cat` and `Plants` are purely
+ * ambient (idle animation only, see their own components) and were
+ * deliberately removed from this list: they never had a real destination
+ * of their own and were piggybacking on the "about" panel, which read as
+ * a false click/hover affordance on something that looks decorative.
  */
 export const sceneObjects: SceneObjectDefinition[] = [
   {
@@ -64,22 +70,10 @@ export const sceneObjects: SceneObjectDefinition[] = [
     panel: "contact",
   },
   {
-    id: "cat",
-    label: "Cat & Plants",
-    description: "They move, breathe, and sometimes the cat wakes up.",
-    panel: "about",
-  },
-  {
-    id: "plants",
-    label: "Plants",
-    description: "Just some quiet greenery keeping the room alive.",
-    panel: "about",
-  },
-  {
     id: "plushie",
-    label: "Plushie",
+    label: "Anime & Manga",
     description: "Anime, mangas & comfort characters.",
-    panel: "writings",
+    panel: "fandom",
   },
 ];
 
@@ -92,6 +86,7 @@ export const panels: PanelDefinition[] = [
   { id: "memories", title: "Memories", subtitle: "The photo wall" },
   { id: "movies", title: "Movies", subtitle: "The poster by the lamp" },
   { id: "contact", title: "Contact", subtitle: "The rotary phone" },
+  { id: "fandom", title: "Anime & Manga", subtitle: "The plushie" },
 ];
 
 export function getSceneObject(id: string): SceneObjectDefinition | undefined {

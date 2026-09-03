@@ -7,10 +7,8 @@ import { EventItem } from "@/components/LaptopInterface/EventItem";
 import { ExperienceCard } from "@/components/LaptopInterface/ExperienceCard";
 import { MenuBar } from "@/components/LaptopInterface/MenuBar";
 import { ProjectCard } from "@/components/LaptopInterface/ProjectCard";
-import { ResumeSection } from "@/components/LaptopInterface/ResumeSection";
 import { Window } from "@/components/LaptopInterface/Window";
 import { achievements } from "@/data/achievements";
-import { contactContent } from "@/data/contact";
 import { experience } from "@/data/experience";
 import { speakingEvents } from "@/data/events";
 import { laptopSections, type LaptopSectionId } from "@/data/laptopSections";
@@ -21,7 +19,6 @@ const SECTION_TITLES: Record<LaptopSectionId, string> = {
   experience: "Experience",
   achievements: "Achievements",
   events: "Events",
-  resume: "Resume",
 };
 
 /**
@@ -74,8 +71,6 @@ export function LaptopInterface() {
                 ))}
               </div>
             )}
-
-            {activeSection === "resume" && <ResumeSection href={contactContent.resumeCta.href} />}
           </Window>
         ) : (
           <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-x-6">
@@ -84,7 +79,7 @@ export function LaptopInterface() {
                 key={section.id}
                 type="button"
                 onClick={() => setActiveSection(section.id)}
-                className="group flex flex-col items-center gap-1.5 rounded-[var(--radius-sm)] px-2 py-2 transition-colors duration-[var(--duration-fast)] hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
+                className="group flex flex-col items-center gap-1.5 rounded-[var(--radius-sm)] bg-black/25 px-2 py-2.5 backdrop-blur-sm transition-colors duration-[var(--duration-fast)] hover:bg-black/40 focus-visible:bg-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
               >
                 <Folder
                   size={42}

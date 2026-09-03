@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { audioManager } from "@/lib/audio/manager";
 import { cn } from "@/utils/cn";
 
 export interface ModalProps {
@@ -18,8 +19,12 @@ export interface ModalProps {
    * than a plain UI panel (see AboutExperience).
    * "screen" — the same unfold, but a dark `texture-screen` dialog instead
    * of paper, for an experience that's a machine, not a page (see
-   * LaptopInterface). */
-  variant?: "fade" | "memory" | "screen";
+   * LaptopInterface).
+   * "gallery" — the same unfold, but a near-black `texture-gallery` dialog
+   * with almost no warm backdrop tint, so walking in reads as a dim room
+   * ready for the artwork's own spotlight to be the only warmth (see
+   * ArtGallery) — deliberately darker/quieter than "screen"'s CRT glow. */
+  variant?: "fade" | "memory" | "screen" | "gallery";
 }
 
 const FOCUSABLE_SELECTOR =
@@ -34,6 +39,7 @@ const EXIT_DURATION_MS: Record<NonNullable<ModalProps["variant"]>, number> = {
   fade: 400,
   memory: 480,
   screen: 480,
+  gallery: 480,
 };
 
 /**
@@ -66,6 +72,18 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
     const id = window.setTimeout(() => setRendered(false), EXIT_DURATION_MS[variant]);
     return () => window.clearTimeout(id);
   }, [open, variant]);
+
+  // "Soft UI transition" cue, on opening only. Deliberately not a
+  // `SoundTrigger` (which skips its own first mount) — Modal is a single
+  // long-lived instance for the whole app, so `open`'s very first `true`
+  // *is* the first real panel open and has to actually play, not be
+  // treated as a mount to skip. A plain `if (open)` guard on this
+  // top-level effect gets that right for free: it does nothing on the
+  // component's initial mount (`open` starts false) and fires on every
+  // later transition into `true`.
+  useEffect(() => {
+    if (open) audioManager.playInteraction("uiTransition");
+  }, [open]);
 
   useEffect(() => {
     // `rendered` (not just `open`) is a real dependency here, not just a
@@ -113,6 +131,8 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
 
   const isUnfold = variant !== "fade";
   const isScreen = variant === "screen";
+  const isGallery = variant === "gallery";
+  const isDark = isScreen || isGallery;
 
   return createPortal(
     <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8", closing && "pointer-events-none")}>
@@ -121,11 +141,13 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
         onClick={onClose}
         className={cn(
           "absolute inset-0 backdrop-blur-sm",
-          isScreen
-            ? "bg-[radial-gradient(75%_60%_at_50%_50%,rgba(255,184,112,0.1),rgba(8,7,5,0.82))]"
-            : isUnfold
-              ? "bg-[radial-gradient(80%_60%_at_50%_38%,rgba(255,184,112,0.18),rgba(15,10,6,0.74))]"
-              : "bg-black/60",
+          isGallery
+            ? "bg-[radial-gradient(70%_55%_at_50%_45%,rgba(20,16,12,0.4),rgba(4,3,2,0.92))]"
+            : isScreen
+              ? "bg-[radial-gradient(75%_60%_at_50%_50%,rgba(255,184,112,0.1),rgba(8,7,5,0.82))]"
+              : isUnfold
+                ? "bg-[radial-gradient(80%_60%_at_50%_38%,rgba(255,184,112,0.18),rgba(15,10,6,0.74))]"
+                : "bg-black/60",
           closing ? "animate-scene-out" : "animate-scene-in",
         )}
       />
@@ -136,7 +158,7 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          isScreen ? "texture-screen" : "texture-paper",
+          isGallery ? "texture-gallery" : isScreen ? "texture-screen" : "texture-paper",
           "relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-warm-lg)] outline-none sm:p-10",
           isUnfold
             ? closing
@@ -154,7 +176,7 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
           aria-label="Close"
           className={cn(
             "absolute right-4 top-4 rounded-full p-1.5 transition-colors duration-[var(--duration-fast)]",
-            isScreen
+            isDark
               ? "text-[var(--color-cream)]/70 hover:bg-white/10 hover:text-[var(--color-cream)]"
               : "text-[var(--color-paper-ink)]/70 hover:bg-black/5 hover:text-[var(--color-paper-ink)]",
           )}
@@ -166,7 +188,7 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
             {title}
           </h2>
           {subtitle ? (
-            <p className={cn("mt-1 text-sm", isScreen ? "text-[var(--color-cream)]/55" : "text-[var(--color-paper-ink)]/60")}>
+            <p className={cn("mt-1 text-sm", isDark ? "text-[var(--color-cream)]/70" : "text-[var(--color-paper-ink)]/70")}>
               {subtitle}
             </p>
           ) : null}

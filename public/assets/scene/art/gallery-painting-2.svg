@@ -1,0 +1,17 @@
+<svg width="70" height="100" viewBox="0 0 70 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Framed abstract painting placeholder">
+  <defs>
+    <linearGradient id="pg2Frame" x1="0" y1="0" x2="70" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8a5a6b"/>
+      <stop offset="1" stop-color="#4a2c38"/>
+    </linearGradient>
+    <linearGradient id="pg2Scene" x1="0" y1="0" x2="0" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c9895e"/>
+      <stop offset="1" stop-color="#3d2f4f"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="66" height="96" rx="2" fill="url(#pg2Frame)" stroke="#1c130c" stroke-width="2"/>
+  <rect x="9" y="9" width="52" height="82" fill="url(#pg2Scene)"/>
+  <circle cx="34" cy="38" r="16" fill="#f3d38a" opacity="0.85"/>
+  <circle cx="46" cy="60" r="9" fill="#2c3b2c" opacity="0.75"/>
+  <circle cx="20" cy="66" r="6" fill="#efe6d2" opacity="0.6"/>
+</svg>

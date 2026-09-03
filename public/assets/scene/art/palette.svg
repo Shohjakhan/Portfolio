@@ -1,0 +1,13 @@
+<svg width="40" height="30" viewBox="0 0 40 30" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Paint palette placeholder">
+  <path
+    d="M20 1 C30 1 38 7 38 15 C38 20 34 22 30 21 C28 20.5 27 19 27 17.5 C27 15.5 28.5 15 28.5 13 C28.5 11 26.5 10.5 24.5 11.5 C22 12.5 22 15 19 15 C13 15 12 21 6 21 C3 21 1 18 1 14 C1 6.5 9.5 1 20 1Z"
+    fill="#c9a24a"
+    stroke="#5a4028"
+    stroke-width="1.6"
+  />
+  <circle cx="9" cy="9" r="2.6" fill="#7a3a2c"/>
+  <circle cx="17" cy="6" r="2.6" fill="#3d4f8a"/>
+  <circle cx="26" cy="7" r="2.6" fill="#5f6b3f"/>
+  <circle cx="32" cy="12" r="2.6" fill="#f3d38a"/>
+  <circle cx="8" cy="17" r="2.6" fill="#efe6d2"/>
+</svg>

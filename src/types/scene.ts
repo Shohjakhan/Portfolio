@@ -23,11 +23,11 @@ export type WeatherCondition = "clear" | "cloudy" | "rain" | "snow";
  */
 export type VisitStage = "initial" | "settled" | "relaxed" | "lateVisitor";
 
-/** Every clickable object in the room. Extend this when a new object ships. */
+/** Every clickable object in the room. Extend this when a new object ships.
+ * `Cat`/`Plants` aren't here — they're purely ambient, no panel of their
+ * own (see `data/sceneObjects.ts`'s doc comment). */
 export type SceneObjectId =
   | "bookshelf"
-  | "cat"
-  | "plants"
   | "easel"
   | "laptop"
   | "coffee"
@@ -46,7 +46,8 @@ export type PanelId =
   | "notes"
   | "memories"
   | "movies"
-  | "contact";
+  | "contact"
+  | "fandom";
 
 export interface SceneObjectDefinition {
   id: SceneObjectId;

@@ -37,6 +37,19 @@ const initialState: SceneState = {
 
 export const sceneStore = createStore<SceneState>(initialState);
 
+/** Same-tab-only preference key — see `setAudioEnabled`'s doc comment for
+ * why this is `sessionStorage`, not `localStorage`. */
+const AUDIO_PREFERENCE_KEY = "room.audioEnabled";
+
+function persistAudioPreference(audioEnabled: boolean) {
+  try {
+    window.sessionStorage.setItem(AUDIO_PREFERENCE_KEY, String(audioEnabled));
+  } catch {
+    // Private browsing / storage disabled — the preference just won't
+    // survive a reload this tab, same as if it were never remembered.
+  }
+}
+
 export const sceneActions = {
   /** No-op when unchanged — useLocalTimeOfDay calls this on a recurring timer, and every store write notifies subscribers. */
   setTimeOfDay(timeOfDay: TimeOfDay) {
@@ -64,7 +77,19 @@ export const sceneActions = {
     sceneStore.setState({ reducedMotion });
   },
   toggleAudio() {
-    sceneStore.setState((state) => ({ audioEnabled: !state.audioEnabled }));
+    const audioEnabled = !sceneStore.getState().audioEnabled;
+    sceneStore.setState({ audioEnabled });
+    persistAudioPreference(audioEnabled);
+  },
+  /** Only two callers: `AudioControls` could use this instead of
+   * `toggleAudio`, and `useAudioPreference`'s restore-on-mount, which
+   * needs to *set* the remembered value rather than flip whatever the
+   * default happens to be. Also persists — same reasoning as
+   * `toggleAudio`, this is still a real preference change. */
+  setAudioEnabled(audioEnabled: boolean) {
+    if (sceneStore.getState().audioEnabled === audioEnabled) return;
+    sceneStore.setState({ audioEnabled });
+    persistAudioPreference(audioEnabled);
   },
 };
 

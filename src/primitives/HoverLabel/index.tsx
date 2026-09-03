@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { cn } from "@/utils/cn";
 
 export type HoverLabelPlacement = "top" | "bottom" | "left" | "right";
@@ -7,6 +8,12 @@ export interface HoverLabelProps {
   description: string;
   visible: boolean;
   placement?: HoverLabelPlacement;
+  /** Nudges the label closer to (or further from) the object — for an
+   * object whose interactive box has empty space between its edge and
+   * the actual art (see `Easel`, whose box is taller than the canvas it
+   * draws), the default placement anchors to the box edge and ends up
+   * reading as "too far away" from the thing being labeled. */
+  style?: CSSProperties;
 }
 
 const placementClasses: Record<HoverLabelPlacement, string> = {
@@ -30,10 +37,11 @@ const placementClasses: Record<HoverLabelPlacement, string> = {
  * treatment. No font-weight class on the title — Alex Brush only ships
  * one weight, a bold class would just trigger faux-bold.
  */
-export function HoverLabel({ label, description, visible, placement = "top" }: HoverLabelProps) {
+export function HoverLabel({ label, description, visible, placement = "top", style }: HoverLabelProps) {
   return (
     <div
       aria-hidden
+      style={style}
       className={cn(
         "texture-paper pointer-events-none absolute z-10 w-max max-w-56 rounded-[var(--radius-md)] px-4 py-3 shadow-[var(--shadow-warm-md)] transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]",
         placementClasses[placement],
