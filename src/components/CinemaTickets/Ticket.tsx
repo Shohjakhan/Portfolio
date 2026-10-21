@@ -16,18 +16,25 @@ export function Ticket({ movie, onSelect }: TicketProps) {
     <button
       type="button"
       onClick={onSelect}
-      className="flex h-28 w-64 overflow-hidden rounded-[var(--radius-sm)] bg-[var(--color-cream)] text-left shadow-[var(--shadow-warm-sm)] transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-1 hover:shadow-[var(--shadow-warm-md)]"
+      aria-label={movie.title}
+      className="group relative block w-72 text-left drop-shadow-[0_6px_10px_rgba(0,0,0,0.5)] transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-1 hover:rotate-[-1deg] hover:[filter:var(--hover-glow)] focus-visible:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
+      style={{ aspectRatio: "732 / 326" }}
     >
-      <div className="flex flex-1 flex-col justify-center gap-1 px-4">
+      {/* the painted blank ticket (art-source/07-panels C1); the stub and body are drawn, the words are live text */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+      <img src="/assets/panels/cinema/ticket.png" alt="" aria-hidden className="absolute inset-0 h-full w-full" />
+      <div className="absolute flex flex-col justify-center gap-0.5" style={{ left: "31%", top: "16%", width: "60%", height: "56%" }}>
         <p className="font-hand-note text-xl leading-none text-[var(--color-paper-ink)]">{movie.title}</p>
-        {movie.year ? <p className="text-xs text-[var(--color-paper-ink)]/70">{movie.year}</p> : null}
-        {movie.note ? <p className="mt-1 line-clamp-2 text-xs text-[var(--color-paper-ink)]/70">{movie.note}</p> : null}
+        {movie.year ? <p className="text-[0.7rem] text-[var(--color-paper-ink)]/75">{movie.year}</p> : null}
+        {movie.note ? <p className="line-clamp-2 text-[0.7rem] text-[var(--color-paper-ink)]/75">{movie.note}</p> : null}
       </div>
-      <div className="flex w-14 shrink-0 items-center justify-center border-l-2 border-dashed border-[var(--color-paper-ink)]/20">
-        <span className="rotate-90 text-[0.6rem] tracking-[0.2em] whitespace-nowrap text-[var(--color-paper-ink)]/70 uppercase">
-          Admit One
-        </span>
-      </div>
+      <span
+        aria-hidden
+        className="absolute flex items-center justify-center text-[0.5rem] tracking-[0.18em] whitespace-nowrap text-[var(--color-paper-ink)]/70 uppercase"
+        style={{ left: "4%", top: "16%", width: "10%", height: "66%", writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+      >
+        Admit One
+      </span>
     </button>
   );
 }

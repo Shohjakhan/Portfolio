@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "s3.us-west-2.amazonaws.com" },
       { protocol: "https", hostname: "secure.notion-static.com" },
       { protocol: "https", hostname: "www.notion.so" },
+      // Notion's built-in gallery covers (e.g. `/images/page-cover/webb4.jpg`)
+      // and its cover picker's Unsplash tab — both are valid "Add cover"
+      // choices on a Movies/Anime row and would otherwise be rejected too.
+      { protocol: "https", hostname: "app.notion.com", pathname: "/images/**" },
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
 

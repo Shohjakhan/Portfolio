@@ -7,14 +7,6 @@ interface ReelShelfProps {
   onSelect: (reel: MemoryReel) => void;
 }
 
-/** Three spoke holes per reel, positions chosen by eye (not literal
- * trigonometry) — close enough to read as a film canister at this size. */
-const HOLE_POSITIONS = [
-  { left: "50%", top: "20%" },
-  { left: "74%", top: "64%" },
-  { left: "26%", top: "64%" },
-];
-
 /**
  * The photo frames open onto this — a shelf of film-reel canisters, one
  * per event/place, each labeled with its title. "A collection of movie
@@ -23,24 +15,17 @@ const HOLE_POSITIONS = [
  */
 export function ReelShelf({ reels, onSelect }: ReelShelfProps) {
   return (
-    <div className="flex flex-wrap items-start justify-center gap-x-10 gap-y-8 px-2 py-4">
+    <div className="flex items-start gap-x-10 overflow-x-auto overscroll-x-contain px-2 py-4 sm:justify-center">
       {reels.map((reel) => (
         <button
           key={reel.id}
           type="button"
           onClick={() => onSelect(reel)}
-          className="group flex flex-col items-center gap-3"
+          className="group flex shrink-0 flex-col items-center gap-3"
         >
           <span className="relative block h-28 w-28 shrink-0 transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] group-hover:-rotate-6 group-hover:scale-105">
-            <span className="film-reel absolute inset-0" aria-hidden />
-            {HOLE_POSITIONS.map((pos, index) => (
-              <span
-                key={index}
-                className="film-reel-hole absolute h-[16%] w-[16%] -translate-x-1/2 -translate-y-1/2"
-                style={pos}
-                aria-hidden
-              />
-            ))}
+            {/* eslint-disable-next-line @next/next/no-img-element -- painted canister, matches the room's plain <img> convention */}
+            <img src="/assets/panels/memories/reel.png" alt="" aria-hidden className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" />
           </span>
           <span className="flex flex-col items-center">
             <span className="font-hand-note text-lg leading-none text-[var(--color-paper-ink)] group-hover:text-[var(--color-accent)]">

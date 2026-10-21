@@ -1,7 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArtworkImage } from "@/components/ArtGallery/ArtworkImage";
 import type { Movie } from "@/types/content";
 
@@ -14,6 +15,11 @@ interface MovieDetailProps {
  * pattern as `ArtworkDetail`, so Escape closes only this, not the whole
  * "Cinema" panel underneath it. */
 export function MovieDetail({ movie, onClose }: MovieDetailProps) {
+  // Portalled to <body>: the dialog around it is a transformed (animated) element, which would
+  // otherwise become this overlay's containing block and shrink "fixed inset-0" to the dialog.
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  useEffect(() => setHost(document.body), []);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
@@ -24,13 +30,15 @@ export function MovieDetail({ movie, onClose }: MovieDetailProps) {
     return () => document.removeEventListener("keydown", onKeyDown, { capture: true });
   }, [onClose]);
 
-  return (
+  if (!host) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-full w-full max-w-sm flex-col items-center gap-4 py-4"
+        className="relative flex max-h-full w-full max-w-md flex-col items-center gap-4 py-4"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -43,8 +51,8 @@ export function MovieDetail({ movie, onClose }: MovieDetailProps) {
         </button>
 
         {movie.poster ? (
-          <div className="relative aspect-[2/3] w-48 shrink-0 overflow-hidden rounded-[var(--radius-sm)] shadow-[var(--shadow-warm-lg)]">
-            <ArtworkImage image={movie.poster} priority sizes="192px" fit="cover" />
+          <div className="relative aspect-[2/3] w-[min(62vw,300px)] shrink-0 overflow-hidden rounded-[var(--radius-sm)] shadow-[var(--shadow-warm-lg)]">
+            <ArtworkImage image={movie.poster} priority sizes="300px" fit="cover" />
           </div>
         ) : null}
 
@@ -54,6 +62,7 @@ export function MovieDetail({ movie, onClose }: MovieDetailProps) {
           {movie.note ? <p className="mt-1 max-w-xs text-sm leading-relaxed text-[var(--color-cream)]/75">{movie.note}</p> : null}
         </div>
       </div>
-    </div>
+    </div>,
+    host,
   );
 }

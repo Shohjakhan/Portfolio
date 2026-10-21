@@ -1,6 +1,5 @@
 "use client";
 
-import { Folder } from "lucide-react";
 import { useState } from "react";
 import { AchievementItem } from "@/components/LaptopInterface/AchievementItem";
 import { EventItem } from "@/components/LaptopInterface/EventItem";
@@ -37,7 +36,7 @@ export function LaptopInterface() {
     <div className="texture-desktop-wallpaper flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-white/10">
       <MenuBar />
 
-      <div className="min-h-[48vh] p-5 sm:p-7">
+      <div className="min-h-[60vh] p-5 sm:p-7">
         {activeSection && activeDefinition ? (
           <Window title={SECTION_TITLES[activeSection]} icon={activeDefinition.icon} onBack={() => setActiveSection(null)}>
             {activeSection === "projects" && (
@@ -81,12 +80,13 @@ export function LaptopInterface() {
                 onClick={() => setActiveSection(section.id)}
                 className="group flex flex-col items-center gap-1.5 rounded-[var(--radius-sm)] bg-black/25 px-2 py-2.5 backdrop-blur-sm transition-colors duration-[var(--duration-fast)] hover:bg-black/40 focus-visible:bg-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
               >
-                <Folder
-                  size={42}
-                  strokeWidth={1.3}
-                  fill="rgba(255, 184, 112, 0.28)"
-                  className="text-[var(--room-lamp-glow)] drop-shadow-[0_3px_5px_rgba(0,0,0,0.5)] transition-transform duration-[var(--duration-fast)] ease-[var(--ease-bounce-soft)] group-hover:scale-110"
+                {/* painted icon per folder (art-source/07-panels L2) */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+                <img
+                  src={`/assets/panels/laptop/icon-${section.id}.png`}
+                  alt=""
                   aria-hidden
+                  className="h-16 w-auto max-w-full object-contain drop-shadow-[0_4px_6px_rgba(0,0,0,0.55)] transition-transform duration-[var(--duration-fast)] ease-[var(--ease-bounce-soft)] group-hover:scale-110 sm:h-20"
                 />
                 <span className="text-xs text-[var(--color-cream)]/90" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                   {section.label}

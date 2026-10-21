@@ -31,8 +31,8 @@ export const aboutExperience: AboutExperienceContent = {
   // No dedicated personal statement exists anywhere on the site yet.
   personalStatement: null,
 
-  // Hero/Portrait.tsx is itself still an icon placeholder — no real photo exists yet.
-  profileImage: null,
+  // A painted portrait, in the room's own style (art-source/07-panels/raw-A1-portrait.jpg).
+  profileImage: { src: "/assets/panels/about/portrait.jpg", alt: "A painted portrait of me by lamplight" },
 
   facts: aboutContent.facts,
   email: siteInfo.email,

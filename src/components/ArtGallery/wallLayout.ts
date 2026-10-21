@@ -39,6 +39,13 @@ export const CANVAS_HEIGHT = 465;
 
 export type FrameStyle = "gold" | "black" | "wood" | "slim";
 
+/** A hung piece's frame, carried into the lightbox so the piece keeps its frame when enlarged. */
+export interface ArtFrame {
+  style: FrameStyle;
+  /** width / height of the frame on the wall */
+  aspect: number;
+}
+
 export interface FrameSlot {
   leftPx: number;
   topPx: number;
@@ -83,7 +90,7 @@ export const WALL_SLOTS: FrameSlot[] = [
 
 export const WALL_SIZE = WALL_SLOTS.length;
 
-export type DecorKind = "plant" | "bust";
+export type DecorKind = "monstera" | "ballerina" | "bust" | "fig";
 
 export interface DecorSlot {
   kind: DecorKind;
@@ -102,10 +109,14 @@ export interface DecorSlot {
  * not below them separately"). Purely decorative, never clickable, same
  * as the room's own `ArtWall`.
  */
+/** Floor decor under the hang: two statues and two plants, spread between the
+ * frame columns. Every box ends at y=448, the floor strip of the painted wall
+ * (gallery-wall.jpg, bottom-anchored), so the art stands on the floor. */
 export const DECOR_SLOTS: DecorSlot[] = [
-  { kind: "plant", leftPx: 13, topPx: 320, widthPx: 85, heightPx: 130 },
-  { kind: "bust", leftPx: 523, topPx: 310, widthPx: 110, heightPx: 140 },
-  { kind: "plant", leftPx: 1179, topPx: 320, widthPx: 80, heightPx: 130, flip: true },
+  { kind: "monstera", leftPx: 6, topPx: 308, widthPx: 105, heightPx: 140 },
+  { kind: "ballerina", leftPx: 330, topPx: 302, widthPx: 115, heightPx: 146 },
+  { kind: "bust", leftPx: 700, topPx: 306, widthPx: 72, heightPx: 142 },
+  { kind: "fig", leftPx: 1150, topPx: 302, widthPx: 78, heightPx: 146 },
 ];
 
 const STYLE_PATTERN: FrameStyle[] = ["gold", "gold", "black", "gold", "wood", "gold", "gold", "black", "gold", "wood", "gold"];

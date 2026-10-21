@@ -20,6 +20,14 @@ const READ_SPINE_COLORS: [string, string][] = [
   ["#6b5a3f", "#44371f"],
 ];
 
+const SPINE_COUNT = 5;
+
+/** Painted covers for the two main books, shown face-out on the top shelf. */
+const COVER: Record<LibraryBookId, string> = {
+  writings: "/assets/panels/library/cover-writings.jpg",
+  warkinless: "/assets/panels/library/cover-warkinless.jpg",
+};
+
 /**
  * The library's entry screen — an actual two-tier bookcase (cornice, side
  * frame, a shelf board between tiers, base trim), not a wood-textured bar
@@ -30,96 +38,70 @@ const READ_SPINE_COLORS: [string, string][] = [
  */
 export function Shelf({ booksRead, onSelectBook, onSelectReadBook }: ShelfProps) {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="max-w-md font-serif text-sm leading-relaxed text-[var(--color-paper-ink)]/70">
-        A little bookcase — two books of mine up top, everything I&apos;ve read lines the shelf below.
-      </p>
+    // The bookcase is the whole panel: one big painted case (art-source/07-panels B1, two
+    // compartments), nothing around it. Compartment boxes are measured from the painting
+    // (% of its size): upper 19-51.5% of the height, lower 58-90.5%, inner sides 13% / 5.5%.
+    <div
+      className="relative w-full overflow-hidden rounded-[var(--radius-md)] shadow-[var(--shadow-warm-lg)]"
+      style={{ aspectRatio: "1202 / 594", backgroundImage: "url(/assets/panels/library/bookcase.jpg)", backgroundSize: "100% 100%" }}
+    >
+      {/* upper compartment — your two books, face out */}
+      <div className="absolute flex items-end justify-center gap-[7%]" style={{ left: "13%", right: "5.5%", top: "20%", height: "31.5%" }}>
+        {libraryBooks.map((book, index) => (
+          <button
+            key={book.id}
+            type="button"
+            onClick={() => onSelectBook(book.id)}
+            aria-label={`Open ${book.title}`}
+            style={{ animationDelay: `${index * 90}ms` }}
+            className="group relative h-[94%] shrink-0 transition-[transform,filter] duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-2 hover:rotate-[-1.5deg] hover:[filter:var(--hover-glow)] focus-visible:-translate-y-2 focus-visible:[filter:var(--hover-glow)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+            <span className="block h-full overflow-hidden rounded-[3px] shadow-[0_8px_16px_rgba(0,0,0,0.6)]">
+              <img src={COVER[book.id]} alt="" aria-hidden className="block h-full w-auto" />
+            </span>
+            {/* the title, on the shelf board under the book */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-full mt-[4%] -translate-x-1/2 whitespace-nowrap font-hand text-[clamp(0.9rem,1.9vw,1.7rem)] leading-none text-[var(--color-cream)]/90 [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]"
+            >
+              {book.title}
+            </span>
+          </button>
+        ))}
+      </div>
 
+      {/* lower compartment — everything read, one painted spine each; scrolls sideways */}
       <div
-        className="relative rounded-[var(--radius-md)] border border-black/40 p-3 shadow-[var(--shadow-warm-lg)] sm:p-4"
-        style={{ background: "linear-gradient(180deg, #3a2a1c, #241810)" }}
+        className="absolute flex items-end gap-[0.6%] overflow-x-auto overflow-y-hidden pb-1"
+        style={{ left: "13%", right: "5.5%", top: "58%", height: "32.5%" }}
       >
-        {/* cornice / top trim */}
-        <div
-          aria-hidden
-          className="h-3 rounded-[2px] shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
-          style={{ background: "linear-gradient(180deg, #5a4230, #3a2a1c)" }}
-        />
-
-        {/* top shelf — the two main books, standing tall */}
-        <div className="texture-wood-dark relative mt-2 flex items-end justify-center gap-6 rounded-[3px] px-6 pt-10 pb-4 sm:gap-10 sm:pt-14">
-          <div aria-hidden className="pointer-events-none absolute inset-x-3 top-0 h-2 rounded-full bg-black/30 blur-[2px]" />
-          {libraryBooks.map((book, index) => {
-            const Icon = book.icon;
-            return (
-              <button
-                key={book.id}
-                type="button"
-                onClick={() => onSelectBook(book.id)}
-                aria-label={`Open ${book.title}`}
-                style={{
-                  background: `linear-gradient(155deg, ${book.spineColor}, ${book.spineColorDark})`,
-                  animationDelay: `${index * 90}ms`,
-                }}
-                className="group relative flex h-48 w-28 shrink-0 flex-col items-center justify-between rounded-t-[4px] rounded-b-[2px] border border-black/25 px-2.5 pb-3 pt-5 text-center shadow-[var(--shadow-warm-sm)] transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-3 hover:rotate-[-1.5deg] hover:shadow-[var(--shadow-warm-md)] focus-visible:-translate-y-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)] sm:h-64 sm:w-36 sm:pt-7"
+        {booksRead.length === 0 ? (
+          <p className="w-full self-center px-4 text-center font-serif text-xs italic text-white/55">
+            This shelf is still empty — books read and loved will line up here.
+          </p>
+        ) : (
+          booksRead.map((book, index) => (
+            <button
+              key={book.id}
+              type="button"
+              onClick={() => onSelectReadBook(book.id)}
+              aria-label={`Open ${book.title}`}
+              className="group relative h-[92%] shrink-0 transition-[transform,filter] duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-2 hover:[filter:var(--hover-glow)] focus-visible:-translate-y-2 focus-visible:[filter:var(--hover-glow)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+              <img src={`/assets/panels/library/spine-${(index % SPINE_COUNT) + 1}.png`} alt="" aria-hidden className="block h-full w-auto drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)]" />
+              {/* the title sits on the spine's own face (the painted book also shows its side
+                  on the right, so the face is the left ~84%), centred both ways */}
+              <span
+                className="pointer-events-none absolute bottom-[10%] left-0 right-[16%] top-[10%] flex items-center justify-center overflow-hidden px-[8%] font-serif text-[clamp(0.5rem,1vw,0.8rem)] text-[var(--color-cream)]/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.7)]"
+                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
               >
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-[6px] rounded-[2px] border border-white/10"
-                  style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.15), inset 0 10px 24px rgba(255,255,255,0.06)" }}
-                />
-                <Icon size={24} strokeWidth={1.5} className="text-white/85 drop-shadow-sm" aria-hidden />
-                <span className="font-serif text-sm leading-tight text-white/95">{book.title}</span>
-                <span className="text-[0.65rem] leading-snug text-white/55">{book.subtitle}</span>
-                <span
-                  aria-hidden
-                  className="absolute top-0 right-4 h-6 w-2.5 bg-[var(--room-lamp-glow)]/70 shadow-[var(--shadow-warm-sm)]"
-                  style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%)" }}
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        {/* the board the two shelves sit on top of one another through */}
-        <div
-          aria-hidden
-          className="relative h-3"
-          style={{ background: "linear-gradient(180deg, #5a4230, #2c2015)", boxShadow: "0 3px 6px rgba(0,0,0,0.45) inset" }}
-        />
-
-        {/* bottom shelf — books read, each its own spine */}
-        <div className="texture-wood-dark relative mb-1 flex min-h-[7.5rem] items-end gap-2 overflow-x-auto rounded-[3px] px-4 pt-6 pb-3 sm:gap-2.5 sm:px-6">
-          {booksRead.length === 0 ? (
-            <p className="w-full py-6 text-center font-serif text-xs italic text-white/40">
-              This shelf is still empty — books read and loved will line up here.
-            </p>
-          ) : (
-            booksRead.map((book, index) => {
-              const [top, bottom] = READ_SPINE_COLORS[index % READ_SPINE_COLORS.length];
-              return (
-                <button
-                  key={book.id}
-                  type="button"
-                  onClick={() => onSelectReadBook(book.id)}
-                  aria-label={`Open ${book.title}`}
-                  style={{ background: `linear-gradient(155deg, ${top}, ${bottom})` }}
-                  className="group flex h-20 w-9 shrink-0 flex-col items-center justify-end rounded-t-[3px] border border-black/25 pb-1.5 shadow-[var(--shadow-warm-sm)] transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] hover:-translate-y-2 hover:shadow-[var(--shadow-warm-md)] focus-visible:-translate-y-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--room-lamp-glow)] sm:h-24 sm:w-11"
-                >
-                  <span
-                    className="truncate text-[0.55rem] text-white/80 sm:text-[0.6rem]"
-                    style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-                  >
-                    {book.title}
-                  </span>
-                </button>
-              );
-            })
-          )}
-        </div>
-
-        {/* base trim */}
-        <div aria-hidden className="mt-1 h-2 rounded-[2px]" style={{ background: "linear-gradient(180deg, #3a2a1c, #241810)" }} />
+                <span className="max-h-full truncate">{book.title}</span>
+              </span>
+            </button>
+          ))
+        )}
       </div>
     </div>
   );

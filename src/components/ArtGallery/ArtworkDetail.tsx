@@ -1,13 +1,17 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { ArtworkImage } from "@/components/ArtGallery/ArtworkImage";
+import type { ArtFrame } from "@/components/ArtGallery/wallLayout";
 import { MEDIUM_LABELS } from "@/data/gallery";
 import type { Artwork } from "@/types/content";
 
 interface ArtworkDetailProps {
   artwork: Artwork;
+  /** The frame the piece hangs in on the wall — it keeps it here. */
+  frame: ArtFrame;
   onClose: () => void;
 }
 
@@ -19,7 +23,12 @@ interface ArtworkDetailProps {
  * other overlay in the room; clicking the scrim closes it too, clicking
  * the artwork/text itself doesn't (`stopPropagation`).
  */
-export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
+export function ArtworkDetail({ artwork, frame, onClose }: ArtworkDetailProps) {
+  // Portalled to <body>: the panel around it is a transformed (animated) element, which would
+  // otherwise become this overlay's containing block and shrink "fixed inset-0" to the panel.
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  useEffect(() => setHost(document.body), []);
+
   useEffect(() => {
     // Modal (the panel this lightbox sits inside) has its own bubble-phase
     // Escape listener on `document` that closes the whole "art" panel —
@@ -39,9 +48,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     return () => document.removeEventListener("keydown", onKeyDown, { capture: true });
   }, [onClose]);
 
-  return (
+  if (!host) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
       onClick={onClose}
     >
       <div
@@ -57,9 +68,22 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           <X size={20} strokeWidth={1.75} />
         </button>
 
-        <div className="gallery-frame relative aspect-[3/4] h-[46vh] max-h-[420px] shrink-0 rounded-[2px] border-[10px] border-[#1a1410] bg-[#050403] p-2">
-          <div className="relative h-full w-full overflow-hidden bg-black/40">
-            <ArtworkImage image={artwork.image} priority sizes="(max-width: 640px) 88vw, 480px" className="p-1" />
+        {/* the piece in its own painted frame, same style and proportions as on the wall; the frame's
+            thickness is a share of the piece's shorter side (see `.gallery-frame-piece` in textures.css) */}
+        <div
+          className="relative shrink-0 [container-type:inline-size]"
+          style={{ width: `min(88vw, calc(min(46vh, 420px) * ${frame.aspect}))`, aspectRatio: `${frame.aspect}` }}
+        >
+          <div
+            data-style={frame.style}
+            className="gallery-frame-piece h-full w-full"
+            style={{ "--frame-k": Math.min(1, 1 / frame.aspect) } as CSSProperties}
+          >
+            <div className="gallery-frame-mat h-full w-full">
+              <div className="relative h-full w-full overflow-hidden">
+                <ArtworkImage image={artwork.image} priority sizes="(max-width: 640px) 88vw, 480px" fit="cover" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -80,6 +104,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
+    host,
   );
 }

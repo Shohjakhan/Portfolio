@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { GlowCopy } from "@/components/shared/GlowCopy";
 import type { IdleAnimation } from "@/primitives/InteractiveObject";
 import { cn } from "@/utils/cn";
 
@@ -18,6 +19,8 @@ export interface LayeredArtProps {
   aspect: string;
   layers: ArtLayer[];
   className?: string;
+  /** Art whose silhouette gives the object its hover glow (see `GlowCopy`); usually the base layer. */
+  glowSrc?: string;
 }
 
 /**
@@ -28,9 +31,10 @@ export interface LayeredArtProps {
  * Each layer is a plain <img>, decorative (aria-hidden) since the
  * surrounding InteractiveObject button already carries the accessible name.
  */
-export function LayeredArt({ aspect, layers, className }: LayeredArtProps) {
+export function LayeredArt({ aspect, layers, className, glowSrc }: LayeredArtProps) {
   return (
     <div className={cn("relative mx-auto h-full", className)} style={{ aspectRatio: aspect }}>
+      {glowSrc ? <GlowCopy src={glowSrc} /> : null}
       {layers.map((layer, index) => (
         <img
           key={index}

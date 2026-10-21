@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import type { ArtFrame } from "@/components/ArtGallery/wallLayout";
 import { ArtworkDetail } from "@/components/ArtGallery/ArtworkDetail";
 import { GalleryWall } from "@/components/ArtGallery/GalleryWall";
 import { WALL_SIZE } from "@/components/ArtGallery/wallLayout";
@@ -38,7 +39,7 @@ export function ArtGallery({ onClose }: ArtGalleryProps) {
 
   const [wallIndex, setWallIndex] = useState(0);
   const [wallDirection, setWallDirection] = useState<"forward" | "backward">("forward");
-  const [openArtwork, setOpenArtwork] = useState<Artwork | null>(null);
+  const [openArtwork, setOpenArtwork] = useState<{ artwork: Artwork; frame: ArtFrame } | null>(null);
 
   const goToWall = (nextIndex: number) => {
     const clamped = Math.max(0, Math.min(walls.length - 1, nextIndex));
@@ -80,7 +81,7 @@ export function ArtGallery({ onClose }: ArtGalleryProps) {
         transitionKey={wallIndex}
         variant={wallDirection === "forward" ? "artwork-forward" : "artwork-backward"}
       >
-        <GalleryWall artworks={walls[wallIndex]} wallIndex={wallIndex} onSelect={setOpenArtwork} />
+        <GalleryWall artworks={walls[wallIndex]} wallIndex={wallIndex} onSelect={(artwork, frame) => setOpenArtwork({ artwork, frame })} />
       </SceneTransition>
 
       {walls.length > 1 ? (
@@ -111,7 +112,7 @@ export function ArtGallery({ onClose }: ArtGalleryProps) {
 
       <BackLink onClick={onClose} variant="dark" align="center" />
 
-      {openArtwork ? <ArtworkDetail artwork={openArtwork} onClose={() => setOpenArtwork(null)} /> : null}
+      {openArtwork ? <ArtworkDetail artwork={openArtwork.artwork} frame={openArtwork.frame} onClose={() => setOpenArtwork(null)} /> : null}
     </div>
   );
 }

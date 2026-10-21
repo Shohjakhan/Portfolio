@@ -2,16 +2,16 @@
 
 import { getSceneObject } from "@/data/sceneObjects";
 import { audioManager } from "@/lib/audio/manager";
+import { GlowCopy } from "@/components/shared/GlowCopy";
 import { InteractiveObject } from "@/primitives/InteractiveObject";
 import { sceneActions } from "@/state/sceneStore";
 
 const definition = getSceneObject("laptop")!;
 
-/** Screen box within the base chassis — matches laptop-base.svg's bezel
- * opening (was previously passed to LayeredArt; hand-rolled here instead
- * since the "My Work" label needs to sit inside this same box, not just
- * the screen image). */
-const SCREEN_BOX = { left: "12.7%", top: "10%", width: "74.5%", height: "55.6%" };
+/** The painted laptop's screen panel (inside its bezel), measured from
+ * laptop.png — the HTML screen (constellation + "My Work") sits exactly in
+ * it. Hand-rolled rather than LayeredArt since the label shares the box. */
+const SCREEN_BOX = { left: "17.25%", top: "4.1%", width: "65.8%", height: "54.2%" };
 
 export function Laptop() {
   return (
@@ -23,23 +23,23 @@ export function Laptop() {
         audioManager.playInteraction("laptopClick");
         sceneActions.openPanel(definition.panel);
       }}
-      idleAnimation="flicker"
-      idleDelayMs={3400}
+      idleAnimation="none"
       hoverEffect="glow"
       className="h-full w-full"
     >
-      <div className="relative mx-auto h-full" style={{ aspectRatio: "110 / 90" }}>
+      <div className="relative mx-auto h-full" style={{ aspectRatio: "600 / 448" }}>
+        <GlowCopy src="/assets/scene/desk/laptop.png" />
         <img
-          src="/assets/scene/desk/laptop-base.svg"
+          src="/assets/scene/desk/laptop.png"
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-contain drop-shadow-[var(--shadow-warm-md)]"
         />
-        <div className="absolute overflow-hidden" style={SCREEN_BOX}>
+        <div className="laptop-screen-pulse absolute overflow-hidden" style={SCREEN_BOX}>
           <img src="/assets/scene/desk/laptop-screen.svg" alt="" aria-hidden className="laptop-screen h-full w-full object-cover" />
           <span
             aria-hidden
-            className="laptop-screen-label pointer-events-none absolute bottom-[12%] left-1/2 -translate-x-1/2 whitespace-nowrap font-serif text-[7px] text-[#f3e6cf] sm:text-[8px]"
+            className="laptop-screen-label pointer-events-none absolute bottom-[12%] left-1/2 -translate-x-1/2 whitespace-nowrap font-serif text-[9px] text-[#f3e6cf] sm:text-[11px]"
           >
             My Work
           </span>

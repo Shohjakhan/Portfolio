@@ -5,6 +5,15 @@ import { ArtworkImage } from "@/components/ArtGallery/ArtworkImage";
 import { BackLink } from "@/components/shared/BackLink";
 import type { MemoryReel } from "@/types/content";
 
+/** The five frame windows of the painted strip, as % of its width. */
+const FRAMES = [
+  { left: 4.79, width: 16.5 },
+  { left: 22.56, width: 17.48 },
+  { left: 41.21, width: 17.58 },
+  { left: 59.96, width: 17.48 },
+  { left: 78.71, width: 16.5 },
+];
+
 interface FilmStripProps {
   reel: MemoryReel;
   onBack: () => void;
@@ -29,44 +38,38 @@ export function FilmStrip({ reel, onBack }: FilmStripProps) {
         ) : null}
       </div>
 
-      <div className="filmstrip overflow-hidden rounded-[var(--radius-md)]">
-        <div className="filmstrip-edge" aria-hidden />
-        {reel.items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 px-8 py-16 text-center">
-            <Film size={22} strokeWidth={1.5} className="text-[var(--color-cream)]/35" aria-hidden />
-            <p className="max-w-xs font-serif text-sm italic text-[var(--color-cream)]/70">
-              No frames developed yet for {reel.title} — photos and videos will hang here.
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-3 overflow-x-auto px-4 py-4">
-            {reel.items.map((item) => (
+      {/* The painted filmstrip (art-source/07-panels M3): five transparent frames per
+          strip, so a reel's photos show through them. Frame boxes are % of the strip. */}
+      <div className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain pb-2">
+        {Array.from({ length: Math.max(1, Math.ceil(reel.items.length / 5)) }, (_, strip) => (
+          <div key={strip} className="relative w-[min(88vw,820px)] shrink-0 snap-start" style={{ aspectRatio: "1024 / 223" }}>
+            {reel.items.slice(strip * 5, strip * 5 + 5).map((item, i) => (
               <div
                 key={item.id}
-                className="relative h-56 w-40 shrink-0 overflow-hidden rounded-[2px] border-[6px] border-[var(--color-cream)] bg-black/40 shadow-[var(--shadow-warm-md)]"
+                className="absolute overflow-hidden bg-black/60"
+                style={{ left: `${FRAMES[i].left}%`, width: `${FRAMES[i].width}%`, top: "26%", height: "48.9%" }}
               >
                 <ArtworkImage image={item.image} sizes="160px" fit="cover" />
                 {item.kind === "video" ? (
-                  <PlayCircle
-                    size={30}
-                    strokeWidth={1.5}
-                    className="pointer-events-none absolute inset-0 m-auto text-[var(--color-cream)]/85"
-                    aria-hidden
-                  />
-                ) : null}
-                {item.caption ? (
-                  <p className="absolute inset-x-0 bottom-0 bg-black/55 px-2 py-1 text-[0.65rem] text-[var(--color-cream)]">
-                    {item.caption}
-                  </p>
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25">
+                    <PlayCircle size={24} strokeWidth={1.5} className="text-[var(--color-cream)]/90" aria-hidden />
+                  </span>
                 ) : null}
               </div>
             ))}
+            {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+            <img src="/assets/panels/memories/filmstrip.png" alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />
           </div>
-        )}
-        <div className="filmstrip-edge" aria-hidden />
+        ))}
       </div>
-
-      <BackLink onClick={onBack} label="the reels" />
+      <div className="flex flex-col gap-3">
+        {reel.items.length === 0 ? (
+          <p className="flex items-center justify-center gap-2 text-center font-serif text-sm italic text-[var(--color-paper-ink)]/75">
+            <Film size={16} strokeWidth={1.5} aria-hidden />
+            No frames developed yet for {reel.title} — photos and videos will hang here.
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

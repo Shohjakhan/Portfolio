@@ -19,17 +19,26 @@ import { useSceneValue } from "@/state/sceneStore";
  * end at ~3° — almost due north/straight up — reading as an odd upward
  * spike rather than a tilted pointer.) */
 const REST_TILT_DEG = 94;
+/** The painted feather's size on screen (its art is 753×805) and where its nib is within it. */
+const FEATHER_W = 46;
+const FEATHER_H = 49;
+const FEATHER_TIP_X = 0.2;
+const FEATHER_TIP_Y = 48.9;
 const MAX_DYNAMIC_TILT_DEG = 14;
 /** 0..1 follow smoothing per frame — high enough to feel responsive, low enough to carry a touch of trailing weight. */
 const FOLLOW_EASE = 0.35;
-const TRAIL_MIN_DISTANCE_PX = 14;
-const TRAIL_MIN_INTERVAL_MS = 90;
-const TRAIL_MAX_DOTS = 6;
+const TRAIL_MIN_DISTANCE_PX = 8;
+const TRAIL_MIN_INTERVAL_MS = 40;
+const TRAIL_MAX_DOTS = 24;
 
 interface TrailDot {
   id: number;
   x: number;
   y: number;
+  size: number;
+  star: boolean;
+  dx: number;
+  dy: number;
 }
 
 interface Ripple {
@@ -105,7 +114,18 @@ export function CustomCursor() {
       const now = performance.now();
       if (dist > TRAIL_MIN_DISTANCE_PX && now - last.t > TRAIL_MIN_INTERVAL_MS) {
         lastTrailRef.current = { x: event.clientX, y: event.clientY, t: now };
-        setTrail((prev) => [...prev.slice(-(TRAIL_MAX_DOTS - 1)), { id: nextId(), x: event.clientX, y: event.clientY }]);
+        setTrail((prev) => [
+          ...prev.slice(-(TRAIL_MAX_DOTS - 1)),
+          {
+            id: nextId(),
+            x: event.clientX + (Math.random() - 0.5) * 6,
+            y: event.clientY + (Math.random() - 0.5) * 6,
+            size: 6 + Math.random() * 7,
+            star: Math.random() < 0.33,
+            dx: (Math.random() - 0.5) * 16,
+            dy: 8 + Math.random() * 16,
+          },
+        ]);
       }
     };
 
@@ -191,16 +211,24 @@ export function CustomCursor() {
         className="pointer-events-none fixed left-0 top-0 z-[9999] will-change-transform"
         style={{ transformOrigin: "0 0" }}
       >
-        <svg
-          width="34"
-          height="34"
-          viewBox="0 0 32 32"
+        {/* the painted feather (public/assets/cursor/feather.png): nib at its bottom-left corner,
+            which is the click point and the pivot of the tilt */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- decorative cursor sprite */}
+        <img
+          src="/assets/cursor/feather.png"
+          alt=""
+          width={FEATHER_W}
+          height={FEATHER_H}
+          draggable={false}
           style={
             {
               position: "absolute",
-              left: -4,
-              top: -29,
-              transformOrigin: "4px 29px",
+              left: -FEATHER_TIP_X,
+              top: -FEATHER_TIP_Y,
+              width: FEATHER_W,
+              height: FEATHER_H,
+              maxWidth: "none", // the global img{max-width:100%} would squash it inside this zero-width box
+              transformOrigin: `${FEATHER_TIP_X}px ${FEATHER_TIP_Y}px`,
               transform: `scale(${isInteractive ? 1.16 : 1})`,
               opacity: visible && !isText ? 1 : 0,
               filter: isInteractive
@@ -211,26 +239,7 @@ export function CustomCursor() {
                 : "transform var(--duration-fast) var(--ease-bounce-soft), filter var(--duration-fast) var(--ease-soft), opacity var(--duration-fast) var(--ease-soft)",
             } as CSSProperties
           }
-        >
-          {/* vane */}
-          <path
-            d="M4 29 C6 23 9 16 14 10 C18 6 22 4 27 3 C24 6 21 10 17 15 C13 20 9 24 4 29 Z"
-            fill="var(--room-lamp-glow)"
-            fillOpacity="0.92"
-          />
-          {/* rachis (center shaft) */}
-          <path d="M4 29 C10 22 16 14 24 6" stroke="var(--color-paper-ink)" strokeWidth="0.6" strokeLinecap="round" fill="none" opacity="0.5" />
-          {/* barbs */}
-          <path
-            d="M8 23 L5 25.5 M12 19 L9 22 M16 15 L13.5 18 M20 11 L18 14"
-            stroke="var(--color-paper-ink)"
-            strokeWidth="0.5"
-            strokeLinecap="round"
-            opacity="0.35"
-          />
-          {/* nib tip */}
-          <circle cx="4" cy="29" r="1.1" fill="var(--color-paper-ink)" opacity="0.8" />
-        </svg>
+        />
 
         {isInteractive && !reducedMotion && (
           <span key={hoverSeq} className="cursor-sparkle" style={{ left: -5, top: -5 }} />
@@ -242,8 +251,8 @@ export function CustomCursor() {
           <span
             key={dot.id}
             aria-hidden
-            className="cursor-trail-dot pointer-events-none fixed z-[9998]"
-            style={{ left: dot.x, top: dot.y }}
+            className={`cursor-trail-dot pointer-events-none fixed z-[9998]${dot.star ? " is-star" : ""}`}
+            style={{ left: dot.x, top: dot.y, width: dot.size, height: dot.size, "--dx": `${dot.dx}px`, "--dy": `${dot.dy}px` } as CSSProperties}
             onAnimationEnd={() => setTrail((prev) => prev.filter((d) => d.id !== dot.id))}
           />
         ))}

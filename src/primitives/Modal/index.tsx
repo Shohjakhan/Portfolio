@@ -24,7 +24,7 @@ export interface ModalProps {
    * with almost no warm backdrop tint, so walking in reads as a dim room
    * ready for the artwork's own spotlight to be the only warmth (see
    * ArtGallery) — deliberately darker/quieter than "screen"'s CRT glow. */
-  variant?: "fade" | "memory" | "screen" | "gallery";
+  variant?: "fade" | "memory" | "screen" | "gallery" | "cinema" | "art";
 }
 
 const FOCUSABLE_SELECTOR =
@@ -40,6 +40,8 @@ const EXIT_DURATION_MS: Record<NonNullable<ModalProps["variant"]>, number> = {
   memory: 480,
   screen: 480,
   gallery: 480,
+  cinema: 480,
+  art: 480,
 };
 
 /**
@@ -132,7 +134,11 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
   const isUnfold = variant !== "fade";
   const isScreen = variant === "screen";
   const isGallery = variant === "gallery";
-  const isDark = isScreen || isGallery;
+  const isCinema = variant === "cinema";
+  // "art": no surface of its own at all — the child (a painted bookcase, a diary page) is the
+  // panel, so there is no beige window around it and no header strip above it.
+  const isArt = variant === "art";
+  const isDark = isScreen || isGallery || isCinema || isArt;
 
   return createPortal(
     <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8", closing && "pointer-events-none")}>
@@ -141,8 +147,12 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
         onClick={onClose}
         className={cn(
           "absolute inset-0 backdrop-blur-sm",
-          isGallery
+          isArt
+            ? "bg-[radial-gradient(75%_60%_at_50%_45%,rgba(30,20,12,0.55),rgba(5,3,2,0.9))]"
+            : isGallery
             ? "bg-[radial-gradient(70%_55%_at_50%_45%,rgba(20,16,12,0.4),rgba(4,3,2,0.92))]"
+            : isCinema
+              ? "bg-[radial-gradient(75%_60%_at_50%_40%,rgba(160,60,40,0.16),rgba(10,4,3,0.86))]"
             : isScreen
               ? "bg-[radial-gradient(75%_60%_at_50%_50%,rgba(255,184,112,0.1),rgba(8,7,5,0.82))]"
               : isUnfold
@@ -158,8 +168,10 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          isGallery ? "texture-gallery" : isScreen ? "texture-screen" : "texture-paper",
-          "relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-warm-lg)] outline-none sm:p-10",
+          isArt ? "" : isGallery ? "texture-gallery" : isScreen ? "texture-screen" : isCinema ? "texture-velvet" : "texture-parchment",
+          isArt
+            ? "relative max-h-[94vh] w-auto max-w-[96vw] overflow-visible outline-none"
+            : "relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-warm-lg)] outline-none sm:p-10",
           isUnfold
             ? closing
               ? "animate-memory-close"
@@ -175,7 +187,8 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
           onClick={onClose}
           aria-label="Close"
           className={cn(
-            "absolute right-4 top-4 rounded-full p-1.5 transition-colors duration-[var(--duration-fast)]",
+            "absolute z-20 rounded-full p-1.5 transition-colors duration-[var(--duration-fast)]",
+            isArt ? "right-2 top-2 bg-black/35 backdrop-blur-sm" : "right-4 top-4",
             isDark
               ? "text-[var(--color-cream)]/70 hover:bg-white/10 hover:text-[var(--color-cream)]"
               : "text-[var(--color-paper-ink)]/70 hover:bg-black/5 hover:text-[var(--color-paper-ink)]",
@@ -183,7 +196,7 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
         >
           <X size={20} strokeWidth={1.75} />
         </button>
-        <header>
+        <header className={isArt ? "sr-only" : undefined}>
           <h2 id={titleId} className="font-serif text-2xl">
             {title}
           </h2>
@@ -193,7 +206,7 @@ export function Modal({ open, onClose, title, subtitle, children, className, var
             </p>
           ) : null}
         </header>
-        <div className="mt-6">{children}</div>
+        <div className={isArt ? undefined : "mt-6"}>{children}</div>
       </div>
     </div>,
     document.body,

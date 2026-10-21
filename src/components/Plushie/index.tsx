@@ -1,6 +1,7 @@
 "use client";
 
 import { getSceneObject } from "@/data/sceneObjects";
+import { GlowCopy } from "@/components/shared/GlowCopy";
 import { InteractiveObject } from "@/primitives/InteractiveObject";
 import { sceneActions } from "@/state/sceneStore";
 
@@ -19,8 +20,9 @@ export function Plushie() {
       hoverEffect="wiggle"
       className="h-full w-full"
     >
+      <GlowCopy src="/assets/scene/decor/plushie.png" />
       <img
-        src="/assets/scene/decor/plushie.svg"
+        src="/assets/scene/decor/plushie.png"
         alt=""
         aria-hidden
         className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"

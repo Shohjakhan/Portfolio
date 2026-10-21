@@ -1,14 +1,22 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { ArtworkImage } from "@/components/ArtGallery/ArtworkImage";
-import { CANVAS_HEIGHT, CANVAS_WIDTH, DECOR_SLOTS, WALL_SLOTS, getFrameStyle } from "@/components/ArtGallery/wallLayout";
+import { CANVAS_HEIGHT, CANVAS_WIDTH, DECOR_SLOTS, WALL_SLOTS, getFrameStyle, type ArtFrame } from "@/components/ArtGallery/wallLayout";
 import type { Artwork } from "@/types/content";
 
 interface GalleryWallProps {
   artworks: Artwork[];
   wallIndex: number;
-  onSelect: (artwork: Artwork) => void;
+  onSelect: (artwork: Artwork, frame: ArtFrame) => void;
 }
+
+const DECOR_SRC = {
+  monstera: "/assets/panels/art/decor-plant.png",
+  ballerina: "/assets/panels/art/decor-ballerina.png",
+  bust: "/assets/panels/art/decor-bust.png",
+  fig: "/assets/panels/art/decor-fig.png",
+} as const;
 
 function canvasStyle(slot: { leftPx: number; topPx: number; widthPx: number; heightPx: number }) {
   return {
@@ -31,7 +39,15 @@ function canvasStyle(slot: { leftPx: number; topPx: number; widthPx: number; hei
  */
 export function GalleryWall({ artworks, wallIndex, onSelect }: GalleryWallProps) {
   return (
-    <div className="relative w-full" style={{ aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}` }}>
+    <div className="relative w-full [container-type:inline-size]"
+      style={{
+        aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}`,
+        // the painted gallery room: its floor strip is the bottom ~7%, where the decor stands
+        backgroundImage: "linear-gradient(rgba(6,5,4,0.35), rgba(6,5,4,0.5)), url(/assets/panels/art/gallery-wall.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center bottom",
+      }}
+    >
       {WALL_SLOTS.map((slot, slotIndex) => {
         const art = artworks[slotIndex];
         if (!art) return null;
@@ -40,12 +56,16 @@ export function GalleryWall({ artworks, wallIndex, onSelect }: GalleryWallProps)
           <button
             key={art.id}
             type="button"
-            onClick={() => onSelect(art)}
+            onClick={() => onSelect(art, { style, aspect: slot.widthPx / slot.heightPx })}
             aria-label={`View ${art.title}`}
             className="gallery-wall-piece absolute cursor-pointer"
             style={canvasStyle(slot)}
           >
-            <div data-style={style} className="gallery-frame-piece h-full w-full">
+            <div
+              data-style={style}
+              className="gallery-frame-piece h-full w-full"
+              style={{ "--frame-k": Math.min(slot.widthPx, slot.heightPx) / CANVAS_WIDTH } as CSSProperties}
+            >
               <div className="gallery-frame-mat h-full w-full">
                 <div className="relative h-full w-full overflow-hidden">
                   <ArtworkImage image={art.image} sizes="20vw" fit="cover" />
@@ -60,7 +80,7 @@ export function GalleryWall({ artworks, wallIndex, onSelect }: GalleryWallProps)
         <img
           key={index}
           aria-hidden
-          src={decor.kind === "plant" ? "/assets/scene/art/gallery-plant.svg" : "/assets/scene/art/gallery-bust.svg"}
+          src={DECOR_SRC[decor.kind]}
           alt=""
           className="absolute object-contain object-bottom opacity-90"
           style={{ ...canvasStyle(decor), transform: decor.flip ? "scaleX(-1)" : undefined }}

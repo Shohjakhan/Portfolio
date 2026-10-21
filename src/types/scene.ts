@@ -35,7 +35,9 @@ export type SceneObjectId =
   | "phone"
   | "memoryWall"
   | "moviePoster"
-  | "plushie";
+  | "plushie"
+  | "lamp"
+  | "gramophone";
 
 /** Content destinations an object can open. Several objects may share one panel. */
 export type PanelId =

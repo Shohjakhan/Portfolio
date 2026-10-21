@@ -1,6 +1,7 @@
 "use client";
 
 import { getSceneObject } from "@/data/sceneObjects";
+import { GlowCopy } from "@/components/shared/GlowCopy";
 import { InteractiveObject } from "@/primitives/InteractiveObject";
 import { sceneActions } from "@/state/sceneStore";
 
@@ -13,13 +14,14 @@ export function MoviePoster() {
       label={definition.label}
       description={definition.description}
       onActivate={() => sceneActions.openPanel(definition.panel)}
-      idleAnimation="flicker"
+      idleAnimation="breathe"
       idleDelayMs={800}
       hoverEffect="tilt"
       className="h-full w-full"
     >
+      <GlowCopy src="/assets/scene/decor/movie-poster.png" />
       <img
-        src="/assets/scene/decor/movie-poster.svg"
+        src="/assets/scene/decor/movie-poster.png"
         alt=""
         aria-hidden
         className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-md)]"

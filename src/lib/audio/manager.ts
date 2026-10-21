@@ -132,11 +132,20 @@ class AudioManager {
     element.play().catch(release);
   }
 
+  /** Latest fade id per element — a newer fade supersedes an in-flight one,
+   * so a quick off→on toggle can't have the stale fade-out finish last and
+   * `pause()` a bed that's meant to be playing. */
+  private fadeIds = new WeakMap<HTMLAudioElement, number>();
+  private nextFadeId = 0;
+
   private fadeTo(element: HTMLAudioElement, target: number, durationMs = AMBIENT_FADE_MS) {
     const start = element.volume;
     const startTime = performance.now();
+    const fadeId = ++this.nextFadeId;
+    this.fadeIds.set(element, fadeId);
 
     const step = () => {
+      if (this.fadeIds.get(element) !== fadeId) return;
       const elapsed = performance.now() - startTime;
       const t = durationMs <= 0 ? 1 : Math.min(1, elapsed / durationMs);
       element.volume = start + (target - start) * t;

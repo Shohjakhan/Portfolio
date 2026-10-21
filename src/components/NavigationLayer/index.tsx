@@ -9,6 +9,7 @@ import { FandomCorner } from "@/components/FandomCorner";
 import { JournalDiary } from "@/components/JournalDiary";
 import { LaptopInterface } from "@/components/LaptopInterface";
 import { MemoriesGallery } from "@/components/MemoriesGallery";
+import { PanelErrorBoundary } from "@/components/NavigationLayer/PanelErrorBoundary";
 import { getPanel } from "@/data/sceneObjects";
 import { usePanelHistorySync } from "@/hooks/usePanelHistorySync";
 import { Modal } from "@/primitives/Modal";
@@ -45,35 +46,41 @@ export function NavigationLayer() {
       title={panel?.title ?? ""}
       subtitle={panel?.subtitle}
       variant={
-        isAbout || isWritings || isNotes || isMemories || isMovies || isFandom || isContact
+        isWritings || isNotes || isContact
+          ? "art"
+          : isAbout || isMemories || isFandom
           ? "memory"
+          : isMovies
+            ? "cinema"
           : isWork
             ? "screen"
             : isArt
               ? "gallery"
               : "fade"
       }
-      className={isWork || isWritings || isArt || isMemories ? "max-w-6xl p-4 sm:p-6" : undefined}
+      className={isWork || isArt || isMemories ? "max-w-6xl p-4 sm:p-6" : undefined}
     >
-      {isAbout ? (
-        <AboutExperience onClose={sceneActions.closePanel} />
-      ) : isWork ? (
-        <LaptopInterface />
-      ) : isWritings ? (
-        <BookshelfLibrary onClose={sceneActions.closePanel} />
-      ) : isArt ? (
-        <ArtGallery onClose={sceneActions.closePanel} />
-      ) : isNotes ? (
-        <JournalDiary onClose={sceneActions.closePanel} />
-      ) : isMemories ? (
-        <MemoriesGallery onClose={sceneActions.closePanel} />
-      ) : isMovies ? (
-        <CinemaTickets onClose={sceneActions.closePanel} />
-      ) : isFandom ? (
-        <FandomCorner onClose={sceneActions.closePanel} />
-      ) : isContact ? (
-        <ContactExperience onClose={sceneActions.closePanel} />
-      ) : null}
+      <PanelErrorBoundary key={activePanelId ?? "none"} onClose={sceneActions.closePanel}>
+        {isAbout ? (
+          <AboutExperience onClose={sceneActions.closePanel} />
+        ) : isWork ? (
+          <LaptopInterface />
+        ) : isWritings ? (
+          <BookshelfLibrary onClose={sceneActions.closePanel} />
+        ) : isArt ? (
+          <ArtGallery onClose={sceneActions.closePanel} />
+        ) : isNotes ? (
+          <JournalDiary onClose={sceneActions.closePanel} />
+        ) : isMemories ? (
+          <MemoriesGallery onClose={sceneActions.closePanel} />
+        ) : isMovies ? (
+          <CinemaTickets onClose={sceneActions.closePanel} />
+        ) : isFandom ? (
+          <FandomCorner onClose={sceneActions.closePanel} />
+        ) : isContact ? (
+          <ContactExperience onClose={sceneActions.closePanel} />
+        ) : null}
+      </PanelErrorBoundary>
     </Modal>
   );
 }

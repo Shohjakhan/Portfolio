@@ -91,12 +91,40 @@
  * intentionally tiny (well under the ring shake below) so it never reads
  * as already ringing. */
 @keyframes phone-idle-tremble {
+  /* rings: a quick burst of shakes, then a pause, forever (the idle state of the phone) */
   0%,
+  58%,
   100% {
-    transform: rotate(0deg);
+    transform: translate(0, 0) rotate(0deg);
   }
-  50% {
-    transform: rotate(0.6deg);
+  60%,
+  64%,
+  68% {
+    transform: translate(-2px, -1px) rotate(-1.6deg);
+  }
+  62%,
+  66%,
+  70% {
+    transform: translate(2px, -1px) rotate(1.6deg);
+  }
+  72% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* the little sound arcs either side of the handset while it rings */
+@keyframes phone-waves {
+  0%,
+  57%,
+  74%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  62%,
+  68% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -159,6 +187,68 @@
   }
   50% {
     transform: scale(1.015);
+  }
+}
+
+/* The sleeping cat's slow, visible breathing: the flank rises and falls (pivot at the base). */
+@keyframes cat-breathe {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+  50% {
+    transform: scaleY(1.045) scaleX(1.012);
+  }
+}
+
+@keyframes sky-plate-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* the candle flame: one painted flame that gently stretches and leans */
+@keyframes flame-a {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); opacity: 1; }
+  30% { transform: scale(0.97, 1.05) skewX(1.5deg); opacity: 0.93; }
+  55% { transform: scale(1.02, 0.97) skewX(-1.2deg); opacity: 1; }
+  80% { transform: scale(0.98, 1.03) skewX(0.8deg); opacity: 0.95; }
+}
+@keyframes candle-glow {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  40% { opacity: 0.6; transform: scale(0.94); }
+  70% { opacity: 1; transform: scale(1.05); }
+}
+@keyframes coat-sway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.2deg); }
+}
+@keyframes rain-glass-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+}
+
+/* Things standing on the desk only "settle": a barely-there swell from the base, never a bob. */
+@keyframes desk-settle {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.004, 1.011); }
+}
+@keyframes note-rise {
+  0% { opacity: 0; transform: translate(0, 0) rotate(-6deg); }
+  20% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(14px, -46px) rotate(8deg); }
+}
+
+@keyframes laptop-glow {
+  0%,
+  100% {
+    opacity: 0.86;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
@@ -295,11 +385,21 @@
 @keyframes book-open {
   0% {
     opacity: 0;
-    transform: perspective(1400px) rotateY(calc(-38deg * var(--book-tilt, 1))) translateX(-2%) scale(0.96);
+    transform: translateY(14px) scale(0.97);
   }
   100% {
     opacity: 1;
-    transform: perspective(1400px) rotateY(0deg) translateX(0) scale(1);
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Turning a page on the painted book: the old spread simply fades away over the new one. */
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
@@ -459,6 +559,14 @@
     backface-visibility: hidden;
     pointer-events: none;
   }
+  /* on the painted book the turning leaf is the colour of its pages */
+  .book-art .page-flip-leaf {
+    background: transparent;
+  }
+  .book-art .page-flip-leaf-forward,
+  .book-art .page-flip-leaf-backward {
+    animation: page-fade-out 450ms ease-out forwards;
+  }
   .page-flip-leaf-forward {
     transform-origin: center;
     animation: page-flip-forward 780ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
@@ -537,7 +645,29 @@
      on top — two independent transforms compose correctly since one is
      the parent's, one is the child's own. */
   .phone-idle-tremble {
-    animation: phone-idle-tremble 5s var(--ease-soft) infinite;
+    animation: phone-idle-tremble 6s linear infinite;
+  }
+  .phone-wave {
+    position: absolute;
+    top: 3%;
+    width: 16%;
+    height: 22%;
+    border: 2px solid rgba(255, 214, 150, 0.9);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    opacity: 0;
+    animation: phone-waves 6s linear infinite;
+    pointer-events: none;
+  }
+  .phone-wave.is-left {
+    left: 9%;
+    border-right-color: transparent;
+    transform-origin: right center;
+  }
+  .phone-wave.is-right {
+    right: 9%;
+    border-left-color: transparent;
+    transform-origin: left center;
   }
   .phone-ring {
     animation: phone-ring 700ms var(--ease-soft);
@@ -606,11 +736,28 @@
   [data-idle="sway"] {
     animation: room-sway var(--duration-ambient) var(--ease-soft) infinite;
   }
+  [data-idle="settle"] {
+    animation: desk-settle 7s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+  .music-note {
+    animation: note-rise 3.4s ease-out infinite;
+  }
   [data-idle="float"] {
     animation: room-float var(--duration-ambient) var(--ease-soft) infinite;
   }
   [data-idle="flicker"] {
     animation: room-flicker calc(var(--duration-ambient) * 0.8) ease-in-out infinite;
+  }
+  .sky-plate-in {
+    animation: sky-plate-in 7s ease-in-out both;
+  }
+  .flame-a { animation: flame-a 1.8s ease-in-out infinite; transform-origin: 48.5% 75%; }
+  .candle-glow { animation: candle-glow 2.1s ease-in-out infinite; }
+  .coat-sway { animation: coat-sway 7s ease-in-out infinite; transform-origin: 50% 5%; }
+  .rain-glass { animation: rain-glass-pulse 6s ease-in-out infinite; }
+  .cat-breathe {
+    animation: cat-breathe 4.2s ease-in-out infinite;
   }
   [data-idle="breathe"] {
     animation: room-breathe var(--duration-ambient) var(--ease-soft) infinite;
@@ -651,6 +798,11 @@
   /* Laptop's screen — subtly brighter and the "My Work" glow intensifies
      on hover/focus, same plain :hover/:focus-visible pattern as the coffee
      steam above (nothing JS-driven needed). */
+  /* the screen's own slow glow — on the wrapper, not the image, so the hover
+     brightening on `.laptop-screen` below isn't overridden by an animation */
+  .laptop-screen-pulse {
+    animation: laptop-glow 4.6s ease-in-out infinite;
+  }
   .laptop-screen {
     filter: brightness(0.9);
     transition: filter var(--duration-slow) var(--ease-soft);
@@ -712,7 +864,8 @@
     transition:
       transform var(--duration-slow) var(--ease-soft),
       filter var(--duration-slow) var(--ease-soft);
-    transform-origin: 22% 12%;
+    /* pivot at the nib (bottom-left of the painted pen) so it lifts like it's being picked up */
+    transform-origin: 12% 88%;
   }
   button[data-object="journal"]:is(:hover, :focus-visible) .journal-pen-layer {
     transform: rotate(-8deg) translateY(-2px);
@@ -730,18 +883,61 @@
     animation: bird-wingbeat 0.5s ease-in-out infinite;
   }
 
+  /* Hover/focus has to read clearly against a painted, busy room: every
+     effect scales the object up a little and wraps it in a warm lamp-light
+     glow (two drop-shadows: a tight bright rim + a wide soft halo), on top
+     of its own motion. Pivot at the base so objects grow upward off the
+     desk/wall rather than sliding sideways. */
+  [data-hover] {
+    transform-origin: 50% 85%;
+  }
   [data-hover="glow"]:is(:hover, :focus-visible) {
-    filter: drop-shadow(var(--shadow-glow-amber));
+    transform: scale(1.07);
   }
   [data-hover="tilt"]:is(:hover, :focus-visible) {
-    transform: rotate(-2deg) scale(1.03);
+    transform: rotate(-2deg) scale(1.08);
   }
   [data-hover="wiggle"]:is(:hover, :focus-visible) {
     animation: room-sway var(--duration-fast) var(--ease-bounce-soft) 2;
+    transform: scale(1.08);
   }
   [data-hover="lift"]:is(:hover, :focus-visible) {
-    transform: translateY(-4px) scale(1.02);
-    filter: drop-shadow(var(--shadow-warm-md));
+    transform: translateY(-6px) scale(1.08);
+  }
+
+  /* The hover glow: pre-blurred warm copies of the object's own art (see GlowCopy), shown by
+     opacity alone. The same for every interactive object. */
+  .glow-copy {
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-soft);
+    will-change: opacity;
+  }
+  /* the copy is flattened to black (hidden behind the art itself) and its drop-shadow
+     supplies the colour, so only the halo outside the silhouette shows */
+  .glow-copy.is-wide {
+    filter: brightness(0) drop-shadow(0 0 16px rgba(255, 150, 55, 1)) drop-shadow(0 0 16px rgba(255, 150, 55, 1)) drop-shadow(0 0 34px rgba(255, 130, 40, 1));
+  }
+  .glow-copy.is-tight {
+    filter: brightness(0) drop-shadow(0 0 2px rgba(255, 230, 170, 1)) drop-shadow(0 0 4px rgba(255, 200, 110, 1)) drop-shadow(0 0 8px rgba(255, 180, 90, 1));
+  }
+  button[data-object]:is(:hover, :focus-visible) .glow-copy.is-wide {
+    opacity: 0.55;
+  }
+  button[data-object]:is(:hover, :focus-visible) .glow-copy.is-tight {
+    opacity: 0.7;
+  }
+
+  /* The bookshelf can't scale on its own (the cat and plant are separate
+     layers on its top, see BookshelfCorner) — the whole corner grows and
+     glows together instead. */
+  .bookshelf-corner {
+    transform-origin: 50% 100%;
+    transition:
+      transform var(--duration-fast) var(--ease-soft),
+      filter var(--duration-fast) var(--ease-soft);
+  }
+  .bookshelf-corner:has([data-object="bookshelf"]:is(:hover, :focus-visible)) {
+    transform: scale(1.03);
   }
 
   /* prefers-reduced-motion is honored at the JS layer (sceneStore.reducedMotion
@@ -749,6 +945,7 @@
      anyone bypassing the store, e.g. a static render before hydration. */
   @media (prefers-reduced-motion: reduce) {
     [data-idle],
+    .laptop-screen-pulse,
     [data-hover="wiggle"],
     [data-stir="true"],
     .bird,
@@ -764,6 +961,14 @@
     .animate-gallery-lightbox-in,
     .charm-swing,
     .phone-idle-tremble,
+    .cat-breathe,
+    .sky-plate-in,
+    .flame-a,
+    .music-note,
+    .candle-glow,
+    .coat-sway,
+    .rain-glass,
+    .phone-wave,
     .phone-ring,
     .phone-cord-layer {
       animation: none !important;

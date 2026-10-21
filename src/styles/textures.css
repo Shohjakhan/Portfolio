@@ -18,6 +18,29 @@
     color: var(--color-paper-ink);
   }
 
+  /* The panels' paper — a painted parchment sheet (public/assets/panels/shared),
+     stretched to cover the whole dialog. `.texture-paper` above stays the
+     small flat paper used by labels and buttons. */
+  .texture-parchment {
+    background-color: var(--color-paper);
+    background-image: url("/assets/panels/shared/parchment.jpg");
+    background-size: cover;
+    background-position: center;
+    color: var(--color-paper-ink);
+  }
+
+  /* Cinema panel: deep oxblood velvet, with a dark scrim so cream text reads. */
+  .texture-velvet {
+    background-color: #3a1612;
+    background-image:
+      radial-gradient(90% 70% at 50% 0%, rgba(255, 170, 100, 0.1), transparent 70%),
+      linear-gradient(rgba(20, 8, 6, 0.38), rgba(20, 8, 6, 0.55)),
+      url("/assets/panels/cinema/velvet.jpg");
+    background-size: auto, auto, cover;
+    background-position: center;
+    color: var(--color-cream);
+  }
+
   .texture-wood {
     background-color: var(--color-wood);
     background-image:
@@ -69,9 +92,8 @@
      wall, not a light-emitting device. */
   .texture-gallery {
     background-color: #0c0a08;
-    background-image:
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0px, transparent 2px, transparent 5px),
-      radial-gradient(60% 45% at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%);
+    /* the painted gallery wall (art-source/07-panels G1) lives on the wall canvas
+       itself (GalleryWall), so the floor lines up with where the decor stands */
     color: var(--color-cream);
   }
 
@@ -88,19 +110,36 @@
       0 10px 22px -6px rgba(0, 0, 0, 0.6),
       inset 0 0 0 1px rgba(0, 0, 0, 0.45);
   }
+  /* Painted frames (public/assets/panels/art): the frame art is drawn as a
+     9-slice border image, so its ornate corners keep their shape while the
+     edges stretch to any slot size. Thickness scales with the *smaller*
+     side of the slot (`--frame-k`, set per piece by GalleryWall) in units
+     of the wall's own width (`cqw`, the wall is a size container), so a
+     tiny frame gets a slim border and a big one a bold one, uniformly. The
+     painted opening is transparent, so the artwork shows through it. */
+  .gallery-frame-piece[data-style="gold"],
+  .gallery-frame-piece[data-style="black"],
+  .gallery-frame-piece[data-style="wood"] {
+    padding: 0;
+    background: none;
+    box-shadow: 0 10px 22px -6px rgba(0, 0, 0, 0.6);
+    border-style: solid;
+    border-image-repeat: stretch;
+  }
   .gallery-frame-piece[data-style="gold"] {
-    background: linear-gradient(135deg, #e8c874 0%, #a8792e 35%, #f0d68a 55%, #7a5a1e 80%, #d4af5a 100%);
-    box-shadow:
-      0 10px 22px -6px rgba(0, 0, 0, 0.6),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.45),
-      inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-width: calc(var(--frame-k, 0.1) * 100cqw * 0.19);
+    border-image-source: url("/assets/panels/art/frame-gold.png");
+    border-image-slice: 81 87 82 86;
   }
   .gallery-frame-piece[data-style="black"] {
-    background: linear-gradient(160deg, #2c2925, #0a0806);
-    padding: 5%;
+    border-width: calc(var(--frame-k, 0.1) * 100cqw * 0.15);
+    border-image-source: url("/assets/panels/art/frame-black.png");
+    border-image-slice: 62 60 59 61;
   }
   .gallery-frame-piece[data-style="wood"] {
-    background: linear-gradient(135deg, var(--color-wood), var(--color-wood-dark));
+    border-width: calc(var(--frame-k, 0.1) * 100cqw * 0.16);
+    border-image-source: url("/assets/panels/art/frame-wood.png");
+    border-image-slice: 67 67 68 68;
   }
   .gallery-frame-piece[data-style="slim"] {
     background: #17130f;
@@ -124,11 +163,45 @@
      and window chrome legible against it without muddying the image. */
   .texture-desktop-wallpaper {
     background-image:
-      linear-gradient(rgba(10, 8, 6, 0.28), rgba(10, 8, 6, 0.28)), url("/assets/scene/desk/laptop-wallpaper.jpg");
+      linear-gradient(rgba(10, 8, 6, 0.28), rgba(10, 8, 6, 0.28)), url("/assets/panels/laptop/wallpaper.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     color: var(--color-cream);
+  }
+
+  /* Contact: a painted open address book (art-source/07-panels K1). On phones
+     the panel stays a plain parchment column (the book would be tiny); from
+     `sm` up the two pages become the two columns the content sits on — page
+     boxes measured from the painting, with the right page stopping short of
+     its index tabs. */
+  .address-book {
+    background: #e6d6b4;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+  }
+  .address-book-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .address-book {
+      position: relative;
+      padding: 0;
+      aspect-ratio: 2000 / 1091;
+      background: url("/assets/panels/contact/address-book.jpg") center / cover no-repeat;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .address-book-pages {
+      position: absolute;
+      inset: 13% 20% 14% 18%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 6%;
+      gap: 0 6%;
+    }
   }
 
   /* Memories → the reel shelf's film-reel icon — CSS-drawn, same "no new

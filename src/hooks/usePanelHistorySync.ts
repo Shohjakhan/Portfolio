@@ -6,7 +6,7 @@ import { sceneActions } from "@/state/sceneStore";
 import type { PanelId } from "@/types/scene";
 
 /**
- * Makes browser Back close an open panel instead of leaving /room. On open,
+ * Makes browser Back close an open panel instead of leaving the room. On open,
  * pushes one shallow history entry (a `#hash`, no real navigation); if the
  * visitor presses Back while it's open, that pops the entry and we close
  * the panel to match. Closing any other way (X, Escape, backdrop click, an
@@ -36,8 +36,21 @@ export function usePanelHistorySync(activePanelId: PanelId | null) {
 
     window.history.pushState({ panel: activePanelId }, "", `#${activePanelId}`);
 
-    const onPopState = () => sceneActions.closePanel();
+    let closedByBack = false;
+    const onPopState = () => {
+      closedByBack = true;
+      sceneActions.closePanel();
+    };
     window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+      // Closed some other way (X, Escape, backdrop, in-panel link): strip
+      // the now-stale `#panel` from the address bar in place. Without
+      // this, a refresh or copied link after closing would reopen the
+      // panel the visitor had just dismissed (see the restore effect above).
+      if (!closedByBack && window.location.hash === `#${activePanelId}`) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    };
   }, [activePanelId]);
 }

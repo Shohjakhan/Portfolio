@@ -41,7 +41,7 @@ export function CinemaTickets({ onClose }: CinemaTicketsProps) {
           ))}
         </div>
       )}
-      <BackLink onClick={onClose} />
+      <BackLink onClick={onClose} variant="dark" />
       {openMovie ? <MovieDetail movie={openMovie} onClose={() => setOpenMovie(null)} /> : null}
     </div>
   );

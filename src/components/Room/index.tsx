@@ -4,11 +4,13 @@ import { useRef, type ComponentType, type CSSProperties, type PointerEvent as Re
 import { AmbientEffects } from "@/components/AmbientEffects";
 import { ArtWall } from "@/components/ArtWall";
 import { AudioControls } from "@/components/AudioControls";
-import { Bookshelf } from "@/components/Bookshelf";
-import { Cat } from "@/components/Cat";
+import { BookshelfCorner } from "@/components/BookshelfCorner";
+import { CandleShelf } from "@/components/CandleShelf";
+import { CoatOnHook } from "@/components/CoatOnHook";
 import { Coffee } from "@/components/Coffee";
-import { CurtainLeft, CurtainRight } from "@/components/Curtain";
 import { Easel } from "@/components/Easel";
+import { FairyLights } from "@/components/FairyLights";
+import { Gramophone } from "@/components/Gramophone";
 import { Journal } from "@/components/Journal";
 import { Lamp } from "@/components/Lamp";
 import { Laptop } from "@/components/Laptop";
@@ -16,18 +18,19 @@ import { MemoryWall } from "@/components/MemoryWall";
 import { MoviePoster } from "@/components/MoviePoster";
 import { NavigationLayer } from "@/components/NavigationLayer";
 import { Phone } from "@/components/Phone";
-import { Plants } from "@/components/Plants";
 import { Plushie } from "@/components/Plushie";
 import { MobileRoom } from "@/components/Room/MobileRoom";
+import { WallClock } from "@/components/WallClock";
 import { Window } from "@/components/Window";
 import { useAmbientAudio } from "@/hooks/useAmbientAudio";
 import { useAudioPreference } from "@/hooks/useAudioPreference";
 import { useLocalTimeOfDay } from "@/hooks/useLocalTimeOfDay";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useViewportTier } from "@/hooks/useViewportTier";
+import { useRealWeather } from "@/hooks/useRealWeather";
 import { useVisitProgress } from "@/hooks/useVisitProgress";
 import { ParallaxLayer } from "@/primitives/ParallaxLayer";
-import { useSceneValue } from "@/state/sceneStore";
+import { useLampLit, useSceneValue } from "@/state/sceneStore";
 import type { TimeOfDay, VisitStage } from "@/types/scene";
 import { cn } from "@/utils/cn";
 
@@ -63,48 +66,102 @@ const GLOW_BOOST: Record<VisitStage, number> = {
 interface ObjectSlot {
   key: string;
   depth: number;
-  /** left/top/width/height — percentages of the stage, clamped so hit targets never shrink below a touch-friendly minimum. */
-  box: { left: string; top: string; width: string; height: string };
+  /** Position as % of the stage; size as a width plus the art's own aspect
+   * ratio (height follows), so painted objects are never stretched. */
+  box: { left: string; top: string; width: string; aspectRatio: string };
+  /** Contact shadow under the object, inset from the slot's left/right edges (% of its width). */
+  shadowInset?: number;
   Component: ComponentType;
 }
 
 /**
- * Every layer painted into the stage, back-to-front-ish by `depth`. Most
- * entries are clickable `InteractiveObject`s, but this list isn't only
- * that — purely decorative layers (the curtains, the lamp) share the exact
- * same slot mechanism since all Room cares about here is "where does this
- * component's box sit and how far does it parallax," not whether it's a
- * button. See docs/adding-interactive-objects.md.
+ * The composition lives in a fixed **3:2 frame** (the reference image's exact
+ * shape, docs/design-reference.png), centred in the viewport. Every slot below
+ * is a position and width in % of that frame, measured off the reference, so
+ * the room has the same proportions and overlaps on a 16:9 monitor, a 16:10
+ * laptop or a tablet; the painted wall and desk extend past the frame to
+ * fill whatever's left. `--fh` (set on the stage) is the frame's height.
  */
-const OBJECT_SLOTS: ObjectSlot[] = [
-  // --- left: bookshelf, plants + sleeping cat on top ---------------------
-  { key: "bookshelf", depth: 0.3, box: { left: "3%", top: "8%", width: "clamp(130px, 16%, 210px)", height: "clamp(280px, 54%, 440px)" }, Component: Bookshelf },
-  { key: "plants", depth: 0.45, box: { left: "4%", top: "1%", width: "clamp(56px, 6.5%, 92px)", height: "clamp(56px, 6.5%, 92px)" }, Component: Plants },
-  { key: "cat", depth: 0.45, box: { left: "11.5%", top: "2%", width: "clamp(84px, 9.5%, 140px)", height: "clamp(60px, 7%, 102px)" }, Component: Cat },
+const u = (n: number) => `${+n.toFixed(2)}%`;
+/** Frames are click-through (`pointer-events-none`), otherwise the desk
+ * frame would sit over the wall frame and swallow its hovers; only
+ * `InteractiveObject`s opt back in. */
+const FRAME_CLASS = "pointer-events-none absolute left-1/2 -translate-x-1/2";
+const FRAME_STYLE: CSSProperties = { height: "var(--fh)", width: "calc(var(--fh) * 1.5)", top: "var(--ft)" };
+/** The desk's back edge sits ~63% down the reference frame (its front edge ~83%); this is that
+ * line in stage terms (50% - fh/2 + 0.63·fh), so the full-width desk plane meets
+ * the frame's desk line exactly. */
+const DESK_TOP = "calc(var(--ft) + var(--fh) * 0.61)";
 
-  // --- lower left: easel + paintings + brushes ---------------------------
-  { key: "artWall", depth: 0.25, box: { left: "18%", top: "8%", width: "clamp(96px, 12%, 160px)", height: "clamp(150px, 28%, 230px)" }, Component: ArtWall },
-  { key: "easel", depth: 0.42, box: { left: "21%", top: "44%", width: "clamp(84px, 9.5%, 140px)", height: "clamp(170px, 32%, 280px)" }, Component: Easel },
-
-  // --- right: memories wall, movie poster, lamp, phone, plushie ----------
-  { key: "memoryWall", depth: 0.2, box: { left: "70%", top: "10%", width: "clamp(130px, 18%, 240px)", height: "clamp(110px, 16%, 200px)" }, Component: MemoryWall },
-  { key: "moviePoster", depth: 0.25, box: { left: "88%", top: "12%", width: "clamp(80px, 8.5%, 130px)", height: "clamp(130px, 17%, 230px)" }, Component: MoviePoster },
-  { key: "lamp", depth: 0.35, box: { left: "89%", top: "52%", width: "clamp(74px, 7%, 120px)", height: "clamp(140px, 15%, 230px)" }, Component: Lamp },
-  { key: "phone", depth: 0.5, box: { left: "78%", top: "66%", width: "clamp(74px, 7%, 120px)", height: "clamp(74px, 7%, 120px)" }, Component: Phone },
-  { key: "plushie", depth: 0.45, box: { left: "90%", top: "74%", width: "clamp(66px, 6.5%, 104px)", height: "clamp(66px, 6.5%, 104px)" }, Component: Plushie },
-
-  // --- center: desk with coffee, laptop (behind), journal (in front) -----
-  { key: "coffee", depth: 0.58, box: { left: "33%", top: "80%", width: "clamp(74px, 6%, 96px)", height: "clamp(74px, 6%, 96px)" }, Component: Coffee },
-  { key: "laptop", depth: 0.5, box: { left: "43%", top: "71%", width: "clamp(130px, 12.5%, 190px)", height: "clamp(106px, 10.2%, 155px)" }, Component: Laptop },
-  { key: "journal", depth: 0.68, box: { left: "45.5%", top: "85%", width: "clamp(84px, 7%, 110px)", height: "clamp(74px, 6.1%, 96px)" }, Component: Journal },
+/**
+ * Things on the back wall, painted *before* the desk plane so the desk's top
+ * edge overlaps their bottoms. Order within is back-to-front. Positions are
+ * measured from the reference (1536×1024): left/top/width in % of the frame.
+ */
+const WALL_SLOTS: ObjectSlot[] = [
+  // left wall, beside the shelf
+  { key: "artWall", depth: 0.2, box: { left: u(0.5), top: u(18), width: u(8.2), aspectRatio: "400 / 345" }, Component: ArtWall },
+  // right wall: a smaller memories cluster, and the poster out to the right, clear of the lamp
+  { key: "memoryWall", depth: 0.2, box: { left: u(64.5), top: u(24.5), width: u(17.5), aspectRatio: "560 / 393" }, Component: MemoryWall },
+  { key: "moviePoster", depth: 0.22, box: { left: u(84.7), top: u(13), width: u(11.6), aspectRatio: "340 / 469" }, Component: MoviePoster },
+  // the shelf stands behind the desk: the desk's back edge covers its feet
+  { key: "bookshelfCorner", depth: 0.3, box: { left: u(11), top: u(3), width: u(23), aspectRatio: "514 / 960" }, Component: BookshelfCorner },
+  // things on the wall: the clock above the photos, a coat on the far-left wall, a candle shelf under the poster
+  { key: "wallClock", depth: 0.2, box: { left: u(69), top: u(5), width: u(7.2), aspectRatio: "1 / 1" }, Component: WallClock },
+  { key: "coat", depth: 0.2, box: { left: u(0.4), top: u(31), width: u(7.4), aspectRatio: "531 / 1043" }, Component: CoatOnHook },
+  { key: "candleShelf", depth: 0.22, box: { left: u(83.5), top: u(42), width: u(14.5), aspectRatio: "870 / 152" }, Component: CandleShelf },
+  // hanging lights: between the shelf and the photo wall, not across the shelf or its cat
+  { key: "fairyLights", depth: 0.12, box: { left: u(27), top: u(-2), width: u(46), aspectRatio: "1400 / 594" }, Component: FairyLights },
 ];
 
-/** Flanks the window; kept separate from OBJECT_SLOTS since both share one
- * depth/behavior and read more clearly as a pair here. */
-const CURTAIN_SLOTS: ObjectSlot[] = [
-  { key: "curtainLeft", depth: 0.15, box: { left: "26%", top: "3%", width: "clamp(50px, 6%, 90px)", height: "clamp(280px, 56%, 460px)" }, Component: CurtainLeft },
-  { key: "curtainRight", depth: 0.15, box: { left: "65%", top: "3%", width: "clamp(50px, 6%, 90px)", height: "clamp(280px, 56%, 460px)" }, Component: CurtainRight },
+/**
+ * The window and the shelf stand ON the desk (they're drawn after the desk plane, so
+ * the desk meets the wall behind them and their bottoms rest on its surface), then
+ * everything else on the desk, back to front. Widths and positions: easel 5-28%,
+ * coffee 29-40%, laptop 42-61%, journal 40-56%, phone 62-75%, lamp 72-87%, plushie 85-99%.
+ */
+const DESK_SLOTS: ObjectSlot[] = [
+  { key: "easel", depth: 0.42, box: { left: u(5), top: u(35), width: u(18.5), aspectRatio: "360 / 565" }, shadowInset: 10, Component: Easel },
+  { key: "lamp", depth: 0.4, box: { left: u(72), top: u(40), width: u(14.5), aspectRatio: "400 / 536" }, shadowInset: 26, Component: Lamp },
+  { key: "laptop", depth: 0.5, box: { left: u(42.2), top: u(48), width: u(18.6), aspectRatio: "600 / 448" }, shadowInset: 6, Component: Laptop },
+  { key: "phone", depth: 0.52, box: { left: u(63.4), top: u(58.6), width: u(10), aspectRatio: "380 / 355" }, shadowInset: 8, Component: Phone },
+  { key: "plushie", depth: 0.55, box: { left: u(85.5), top: u(57), width: u(11.5), aspectRatio: "320 / 349" }, shadowInset: 14, Component: Plushie },
+  { key: "gramophone", depth: 0.5, box: { left: u(27.3), top: u(47.6), width: u(10.2), aspectRatio: "497 / 647" }, shadowInset: 10, Component: Gramophone },
+  { key: "coffee", depth: 0.58, box: { left: u(30.3), top: u(65.4), width: u(8.6), aspectRatio: "260 / 208" }, shadowInset: 6, Component: Coffee },
+  { key: "journal", depth: 0.66, box: { left: u(40.5), top: u(69), width: u(16), aspectRatio: "600 / 330" }, shadowInset: 4, Component: Journal },
 ];
+
+/** A soft contact shadow where an object meets the desk, so it sits on it rather than floating. */
+function GroundShadow({ inset = 8 }: { inset?: number }) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute"
+      style={{
+        left: `${inset}%`,
+        right: `${inset}%`,
+        bottom: "-3%",
+        height: "9%",
+        background:
+          "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.55) 40%, transparent 75%)",
+        filter: "blur(2px)",
+      }}
+    />
+  );
+}
+
+/** Hovering/focusing an object lifts its whole slot above its neighbours, so
+ * its callout label is never hidden behind a later object (each
+ * `ParallaxLayer` is its own stacking context, so the label's own z-index
+ * can't escape it). */
+const SLOT_CLASS = "absolute hover:z-40 focus-within:z-40";
+
+const renderSlot = ({ key, depth, box, shadowInset, Component }: ObjectSlot) => (
+  <ParallaxLayer key={key} depth={depth} className={SLOT_CLASS} style={box}>
+    {shadowInset !== undefined ? <GroundShadow inset={shadowInset} /> : null}
+    <Component />
+  </ParallaxLayer>
+);
 
 /**
  * Composition root for the illustrated room. Owns the things every object
@@ -115,7 +172,7 @@ const CURTAIN_SLOTS: ObjectSlot[] = [
  * genuinely different trees, not one tree at different sizes:
  *
  * - **`"desktop"` and `"tablet"`** share this file's absolute-positioned
- *   canvas (`OBJECT_SLOTS`/`CURTAIN_SLOTS`, parallax, the desk-plane and
+ *   canvas (`WALL_SLOTS`/`DESK_SLOTS`, parallax, the desk-plane and
  *   vignette overlays). Tablet doesn't get a separate composition of its
  *   own — every slot is already `clamp()`-scaled across a wide size range
  *   with a touch-friendly floor (see `ObjectSlot`'s own doc comment), and
@@ -140,12 +197,14 @@ export function Room() {
   usePrefersReducedMotion();
   useLocalTimeOfDay();
   useVisitProgress();
+  useRealWeather();
   useAudioPreference();
   useAmbientAudio();
   const tier = useViewportTier();
   const isMobile = tier === "mobile";
   const timeOfDay = useSceneValue((state) => state.timeOfDay);
   const visitStage = useSceneValue((state) => state.visitStage);
+  const lampLit = useLampLit();
   const stageRef = useRef<HTMLDivElement>(null);
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -185,11 +244,17 @@ export function Room() {
         // Mobile: natural content height, no clipping either axis —
         // `MobileRoom` is meant to be scrolled top to bottom (see
         // "scrolling is intentional" in the responsive brief).
-        isMobile ? "min-h-screen overflow-x-hidden" : "h-screen min-h-[560px] overflow-x-hidden overflow-y-auto",
+        isMobile ? "min-h-screen overflow-x-hidden" : "h-screen min-h-[560px] overflow-hidden",
       )}
       style={
         {
-          "--room-glow": ROOM_GLOW[timeOfDay],
+          "--room-glow": lampLit ? ROOM_GLOW.night : ROOM_GLOW[timeOfDay],
+          "--H": "max(100vh, 560px)",
+          // frame height: fill the viewport WIDTH (the reference's objects are sized as a share of
+          // its width), overhanging the height by at most 25% — the overhang is cropped mostly from
+          // the dark cabinet at the bottom, not the heading at the top
+          "--fh": "min(max(125vh, 700px), 66.667vw)",
+          "--ft": "max(calc((var(--H) - var(--fh)) * 0.5), calc((var(--H) - var(--fh)) * 0.12))",
           "--sway-scale": SWAY_SCALE[visitStage],
           "--glow-boost": GLOW_BOOST[visitStage],
         } as CSSProperties
@@ -199,15 +264,14 @@ export function Room() {
         <MobileRoom />
       ) : (
         <>
-          {/* desk plane — a lighter, horizontally-grained band so the lower
-              third of the room reads as a tabletop, not more wall */}
-          <ParallaxLayer depth={0.05} className="absolute inset-x-0 bottom-0 h-[38%]">
-            <div
-              aria-hidden
-              className="texture-wood h-full w-full"
-              style={{ boxShadow: "0 2px 0 rgba(255, 255, 255, 0.08) inset, 0 40px 70px -30px rgba(0, 0, 0, 0.5) inset" }}
-            />
-          </ParallaxLayer>
+          {/* painted back wall (plaster + wainscot) — replaces the flat
+              wood-texture wall on the canvas; the CSS texture underneath
+              stays as the fallback while the image loads */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-cover bg-top"
+            style={{ backgroundImage: "url(/assets/scene/background/room-wall.jpg)", filter: "brightness(0.62) saturate(0.9)" }}
+          />
 
           <div
             aria-hidden
@@ -219,21 +283,56 @@ export function Room() {
             }}
           />
 
-          <ParallaxLayer depth={0.1} className="absolute inset-0">
-            <Window />
+          {/* back wall layer: the window and everything hung or standing against the wall.
+              Drawn BEFORE the desk plane, so the desk's back edge covers their bottoms. */}
+          <div className={FRAME_CLASS} style={FRAME_STYLE}>
+            <ParallaxLayer depth={0.1} className="absolute inset-0">
+              <Window />
+            </ParallaxLayer>
+            {WALL_SLOTS.map(renderSlot)}
+          </div>
+
+          {/* desk plane — a lighter, horizontally-grained band so the lower
+              part of the room reads as a tabletop, not more wall; full width,
+              starting at the frame's desk line and drawn over the wall layer */}
+          <ParallaxLayer depth={0.05} className="absolute inset-x-0" style={{ top: DESK_TOP, height: "calc(var(--fh) * 0.225)" }}>
+            {/* painted desk (art-source/07-panels 2b); the CSS wood stays underneath as the load fallback */}
+            <div
+              aria-hidden
+              className="texture-wood h-full w-full"
+              style={{
+                backgroundImage: "url(/assets/scene/background/desk-surface.jpg)",
+                backgroundSize: "100% 100%",
+                backgroundPosition: "center top",
+                boxShadow: "0 -6px 18px rgba(0, 0, 0, 0.35)",
+              }}
+            />
           </ParallaxLayer>
 
-          {CURTAIN_SLOTS.map(({ key, depth, box, Component }) => (
-            <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
-              <Component />
-            </ParallaxLayer>
-          ))}
+          {/* under the desk: the reference's dark cabinet of books, below the desk's front edge */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0"
+            style={{
+              top: "calc(var(--ft) + var(--fh) * 0.835)",
+              background: "linear-gradient(180deg, #1a120c 0%, #0d0907 60%, #070504 100%)",
+              boxShadow: "0 -10px 24px rgba(0, 0, 0, 0.45)",
+            }}
+          />
 
-          {OBJECT_SLOTS.map(({ key, depth, box, Component }) => (
-            <ParallaxLayer key={key} depth={depth} className="absolute" style={box}>
-              <Component />
-            </ParallaxLayer>
-          ))}
+          <div className={FRAME_CLASS} style={FRAME_STYLE}>
+            {DESK_SLOTS.map(renderSlot)}
+
+            {/* the reference's title, above the window */}
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 text-center" style={{ top: "3.4%" }}>
+              <p className="font-hand text-[clamp(1.4rem,3.4vw,3.2rem)] leading-none text-[var(--color-cream)]/85 [text-shadow:0_2px_14px_rgba(0,0,0,0.7)]">
+                Welcome to my little universe
+              </p>
+              <p className="mt-1 font-hand-note text-[clamp(0.8rem,1.5vw,1.4rem)] leading-none text-[var(--color-cream)]/60 [text-shadow:0_1px_8px_rgba(0,0,0,0.7)]">
+                every object has a story
+              </p>
+            </div>
+          </div>
 
           <AmbientEffects />
 

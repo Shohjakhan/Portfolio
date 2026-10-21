@@ -9,10 +9,10 @@ import type { VisitStage } from "@/types/scene";
  * stages, per the LONG-STAY SYSTEM brief ("cat wakes briefly"). Still rare:
  * this is a small discovery, not a repeating gimmick. */
 const STIR_INTERVAL_MS: Record<VisitStage, number> = {
-  initial: 100_000,
-  settled: 75_000,
-  relaxed: 55_000,
-  lateVisitor: 38_000,
+  initial: 20_000,
+  settled: 16_000,
+  relaxed: 13_000,
+  lateVisitor: 10_000,
 };
 
 /**
@@ -29,7 +29,7 @@ export function Cat() {
   const visitStage = useSceneValue((state) => state.visitStage);
   const reducedMotion = useSceneValue((state) => state.reducedMotion);
   const activeObject = useSceneValue((state) => state.activeObject);
-  const periodicStir = useOccasionalTrigger(STIR_INTERVAL_MS[visitStage], 1500);
+  const periodicStir = useOccasionalTrigger(STIR_INTERVAL_MS[visitStage], 3200);
 
   // One extra stir right as a new visit stage begins — skips the very
   // first render (mounting already "settled", e.g. after a fast refresh,
@@ -54,7 +54,7 @@ export function Cat() {
   const [bookshelfGlance, setBookshelfGlance] = useState(false);
   useEffect(() => {
     if (activeObject !== "bookshelf" || reducedMotion) return;
-    if (Math.random() >= 0.4) return;
+    if (Math.random() >= 0.85) return;
     setBookshelfGlance(true);
     const id = window.setTimeout(() => setBookshelfGlance(false), 1500);
     return () => window.clearTimeout(id);
@@ -63,15 +63,25 @@ export function Cat() {
   const stirring = periodicStir || discoveryStir || bookshelfGlance;
 
   return (
-    <div aria-hidden className="h-full w-full">
-      <img
-        src="/assets/scene/bookshelf/cat.svg"
-        alt=""
-        data-idle="breathe"
-        data-stir={stirring ? "true" : undefined}
-        style={{ animationDelay: "1800ms", animationDuration: "7000ms" }}
-        className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
-      />
+    <div aria-hidden className="relative h-full w-full">
+      {/* Two pixel-matched paintings of the same cat (asleep / head raised,
+          see art-source/01-bookshelf-test/), crossfaded while it stirs —
+          the "occasionally wakes" beat from CLAUDE.md §2, now with a real
+          awake pose instead of only a transform wobble. */}
+      <div style={{ transformOrigin: "50% 100%" }} className="cat-breathe absolute inset-0">
+        <img
+          src="/assets/scene/bookshelf/cat-sleeping.png"
+          alt=""
+          style={{ opacity: stirring ? 0 : 1, transition: "opacity 600ms var(--ease-soft)" }}
+          className="absolute inset-0 h-full w-full object-contain"
+        />
+        <img
+          src="/assets/scene/bookshelf/cat-awake.png"
+          alt=""
+          style={{ opacity: stirring ? 1 : 0, transition: "opacity 600ms var(--ease-soft)" }}
+          className="absolute inset-0 h-full w-full object-contain"
+        />
+      </div>
     </div>
   );
 }

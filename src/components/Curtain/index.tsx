@@ -3,21 +3,22 @@
 type CurtainSide = "left" | "right";
 
 /**
- * Purely environmental, like `Window` — flanks the window frame. One SVG
- * asset (`window/curtain.svg`), mirrored via a wrapper's `scaleX(-1)` for
- * the right side rather than shipping a second file (see
- * docs/asset-architecture.md §2). The sway animation lives on the inner
- * <img>, not the mirrored wrapper, so the two transforms don't collide.
+ * Purely environmental, like `Window` — the two velvet panels flanking the
+ * window. One painting of both panels on their rod, split at the gap
+ * between them (art-source/06-landing-objects/), so each side keeps its own
+ * painted folds and lighting instead of a mirrored copy. The sway lives on
+ * the <img> and pivots at the rod, so the rings stay put and the fabric
+ * swings.
  */
 function Curtain({ side }: { side: CurtainSide }) {
   return (
-    <div aria-hidden className="h-full w-full" style={side === "right" ? { transform: "scaleX(-1)" } : undefined}>
+    <div aria-hidden className="h-full w-full">
       <img
-        src="/assets/scene/window/curtain.svg"
+        src={`/assets/scene/window/curtain-${side}.png`}
         alt=""
         data-idle="sway"
         style={{ animationDelay: side === "right" ? "1400ms" : "300ms", transformOrigin: "50% 0%" }}
-        className="h-full w-full object-contain object-top drop-shadow-[var(--shadow-warm-sm)]"
+        className="h-full w-full object-contain object-top drop-shadow-[var(--shadow-warm-md)]"
       />
     </div>
   );

@@ -12,10 +12,12 @@ export function Plants() {
   return (
     <div aria-hidden className="h-full w-full">
       <img
-        src="/assets/scene/bookshelf/plants.svg"
+        src="/assets/scene/bookshelf/plants.png"
         alt=""
         data-idle="sway"
-        style={{ animationDelay: "900ms", animationDuration: "6500ms" }}
+        // Pivot at the pot's base (≈37% down the painted art) so the pot
+        // stays seated on the shelf and only the leaves and vines swing.
+        style={{ animationDelay: "900ms", animationDuration: "6500ms", transformOrigin: "45% 37%" }}
         className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
       />
     </div>

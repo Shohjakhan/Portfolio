@@ -36,34 +36,34 @@ export function BookFrame({ title, subtitle, icon: Icon, onBack, tilt = 1, child
   }, []);
 
   return (
-    <div
-      className="animate-book-open texture-paper relative flex h-[76vh] flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-paper-ink)]/10 shadow-[var(--shadow-warm-lg)] sm:h-[80vh]"
-      style={{ "--book-tilt": tilt, transformOrigin: "left center" } as CSSProperties}
-    >
-      {/* spine gutter — a soft shadow down the bound edge, like a real open book */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-black/18 to-transparent"
-      />
-
-      <div className="flex items-center gap-3 border-b border-[var(--color-paper-ink)]/10 bg-black/[0.02] px-5 py-3 sm:px-8">
+    <div className="animate-book-open w-full" style={{ "--book-tilt": tilt, transformOrigin: "left center" } as CSSProperties}>
+      {/* the way back, and which book this is — above the book, on the dark backdrop */}
+      <div className="mb-2 flex items-center gap-3 px-1 text-[var(--color-cream)]">
         <button
           type="button"
           onClick={onBack}
-          className="flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs text-[var(--color-paper-ink)]/70 transition-colors duration-[var(--duration-fast)] hover:bg-black/5 hover:text-[var(--color-paper-ink)]"
+          className="flex shrink-0 items-center gap-1.5 rounded-full bg-black/35 px-3 py-1.5 text-xs backdrop-blur-sm transition-colors duration-[var(--duration-fast)] hover:bg-black/55"
         >
           <ArrowLeft size={14} strokeWidth={1.75} aria-hidden />
           Shelf
         </button>
-        <div className="h-4 w-px bg-[var(--color-paper-ink)]/15" aria-hidden />
-        <Icon size={16} strokeWidth={1.5} className="shrink-0 text-[var(--color-accent)]" aria-hidden />
+        <Icon size={16} strokeWidth={1.5} className="shrink-0 text-[var(--room-lamp-glow)]" aria-hidden />
         <div className="min-w-0">
-          <p className="truncate font-serif text-sm text-[var(--color-paper-ink)]">{title}</p>
-          <p className="truncate text-[0.7rem] text-[var(--color-paper-ink)]/70">{subtitle}</p>
+          <p className="truncate font-serif text-sm">{title}</p>
+          <p className="truncate text-[0.7rem] text-[var(--color-cream)]/70">{subtitle}</p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">{children}</div>
+      {/* the painted open book (art-source/08-living-room); the pages are the two light areas, so the
+          reading content is inset to sit on them */}
+      <div
+        className="book-art relative w-full drop-shadow-[0_18px_30px_rgba(0,0,0,0.55)]"
+        style={{ aspectRatio: "1810 / 1265", backgroundImage: "url(/assets/panels/library/book-open.jpg)", backgroundSize: "100% 100%" }}
+      >
+        <div className="absolute overflow-hidden" style={{ left: "7%", right: "7%", top: "8.5%", bottom: "9%" }}>
+          <div className="h-full overflow-y-auto">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }

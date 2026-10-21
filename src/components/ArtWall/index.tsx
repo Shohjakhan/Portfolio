@@ -13,27 +13,15 @@
  */
 export function ArtWall() {
   return (
-    <div aria-hidden className="relative h-full w-full">
+    <div aria-hidden className="h-full w-full">
+      {/* One painted cluster (gilt moonlit lake, dark-wood lighthouse,
+          unframed pears) — art-source/06-landing-objects/. */}
       <img
-        src="/assets/scene/art/gallery-painting-2.svg"
+        src="/assets/scene/art/art-wall.png"
         alt=""
         data-idle="breathe"
         style={{ animationDelay: "600ms" }}
-        className="absolute top-0 left-[6%] w-[52%] -rotate-2 drop-shadow-[var(--shadow-warm-sm)]"
-      />
-      <img
-        src="/assets/scene/art/gallery-painting-1.svg"
-        alt=""
-        data-idle="breathe"
-        style={{ animationDelay: "2200ms" }}
-        className="absolute top-[6%] left-[46%] w-[48%] rotate-1 drop-shadow-[var(--shadow-warm-sm)]"
-      />
-      <img
-        src="/assets/scene/art/gallery-painting-3.svg"
-        alt=""
-        data-idle="breathe"
-        style={{ animationDelay: "3800ms" }}
-        className="absolute top-[54%] left-[22%] w-[46%] -rotate-1 drop-shadow-[var(--shadow-warm-sm)]"
+        className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
       />
     </div>
   );

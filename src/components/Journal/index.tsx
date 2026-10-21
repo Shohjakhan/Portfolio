@@ -21,7 +21,7 @@ export function Journal() {
       label={definition.label}
       description={definition.description}
       onActivate={() => sceneActions.openPanel(definition.panel)}
-      idleAnimation="float"
+      idleAnimation="settle"
       idleDelayMs={400}
       idleDurationMs={5400}
       hoverEffect="lift"
@@ -29,13 +29,14 @@ export function Journal() {
       className="h-full w-full"
     >
       <LayeredArt
-        aspect="80 / 70"
-        className="drop-shadow-[var(--shadow-warm-sm)]"
+        glowSrc="/assets/scene/desk/journal-pages.png"
+        aspect="600 / 330"
+        className="drop-shadow-[var(--shadow-warm-md)]"
         layers={[
-          { src: "/assets/scene/desk/journal-pages.svg", className: "journal-pages-layer" },
+          { src: "/assets/scene/desk/journal-pages.png", className: "journal-pages-layer" },
           {
-            src: "/assets/scene/desk/journal-pen.svg",
-            box: { left: "62.5%", top: "8.6%", width: "37.5%", height: "40%" },
+            src: "/assets/scene/desk/journal-pen.png",
+            box: { left: "64.29%", top: "28.34%", width: "26.59%", height: "37.87%" },
             className: "journal-pen-layer",
           },
         ]}

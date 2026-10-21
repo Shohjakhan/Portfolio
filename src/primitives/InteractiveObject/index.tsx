@@ -8,7 +8,7 @@ import { sceneActions, useSceneValue } from "@/state/sceneStore";
 import type { SceneObjectId } from "@/types/scene";
 import { cn } from "@/utils/cn";
 
-export type IdleAnimation = "none" | "sway" | "float" | "flicker" | "breathe";
+export type IdleAnimation = "none" | "sway" | "float" | "flicker" | "breathe" | "settle";
 export type HoverEffect = "none" | "glow" | "tilt" | "wiggle" | "lift";
 
 export interface InteractiveObjectProps {
@@ -36,6 +36,8 @@ export interface InteractiveObjectProps {
   /** Passed through to `HoverLabel` — see its doc comment for when an
    * object needs this (a box taller/wider than its actual art). */
   labelStyle?: CSSProperties;
+  /** For toggles (the lamp): exposes on/off to assistive tech. */
+  pressed?: boolean;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -83,6 +85,7 @@ export function InteractiveObject({
   idleDurationMs,
   labelPlacement = "top",
   labelStyle,
+  pressed,
   className,
   style,
   children,
@@ -101,12 +104,12 @@ export function InteractiveObject({
   };
 
   return (
-    <div className={cn("relative inline-flex", className)} style={style}>
+    <div className={cn("pointer-events-auto relative inline-flex", className)} style={style}>
       <button
         type="button"
         aria-label={label}
         aria-describedby={descriptionId}
-        data-idle={effectiveIdle !== "none" ? effectiveIdle : undefined}
+        aria-pressed={pressed}
         data-hover={effectiveHover !== "none" ? effectiveHover : undefined}
         data-object={id}
         onPointerEnter={() => setActive(true)}
@@ -114,14 +117,23 @@ export function InteractiveObject({
         onFocus={() => setActive(true)}
         onBlur={() => setActive(false)}
         onClick={onActivate}
-        style={
-          effectiveIdle !== "none"
-            ? { animationDelay: `${idleDelayMs}ms`, animationDuration: idleDurationMs ? `${idleDurationMs}ms` : undefined }
-            : undefined
-        }
-        className="block h-full w-full cursor-pointer bg-transparent p-0 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-soft)]"
+        className="relative block h-full w-full cursor-pointer bg-transparent p-0 transition-[transform,filter] duration-[var(--duration-fast)] ease-[var(--ease-soft)]"
       >
-        {children}
+        {/* Idle motion lives on this inner wrapper, not on the button: a running CSS
+            animation on `transform` beats the hover rule's `transform: scale(...)` on
+            the same element, so with both on the button an animated object (coffee,
+            journal, easel, photo wall, plushie) would never grow on hover. */}
+        <span
+          data-idle={effectiveIdle !== "none" ? effectiveIdle : undefined}
+          style={
+            effectiveIdle !== "none"
+              ? { animationDelay: `${idleDelayMs}ms`, animationDuration: idleDurationMs ? `${idleDurationMs}ms` : undefined }
+              : undefined
+          }
+          className="interactive-body block h-full w-full"
+        >
+          {children}
+        </span>
         <span id={descriptionId} className="sr-only">
           {description}
         </span>

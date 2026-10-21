@@ -33,21 +33,29 @@ export function Charm({ entry, index, onSelect }: CharmProps) {
       aria-label={entry.title}
       className="group flex flex-col items-center gap-1.5"
     >
-      <span className="h-7 w-[2px] bg-black/25" aria-hidden />
+      <span className="h-5 w-[2px] bg-black/25" aria-hidden />
       <span className="charm-swing flex flex-col items-center" style={{ animationDelay: `${index * 350}ms` }}>
-        <span aria-hidden className="-mb-1 h-3 w-3 rounded-full border-2 border-[var(--color-wood-dark)]/60" />
-        <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-[10px] border-2 border-[var(--color-cream)] bg-[var(--color-cream)] shadow-[var(--shadow-warm-sm)] transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] group-hover:-translate-y-1 group-hover:rotate-[-2deg] group-hover:shadow-[var(--shadow-warm-md)]">
-          {entry.cover ? (
-            // eslint-disable-next-line @next/next/no-img-element -- decorative thumbnail, data-driven; matches the room's plain <img> convention for small covers
-            <img src={entry.cover.src} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <span
-              className="flex h-full w-full items-center justify-center font-hand text-2xl text-[var(--color-paper-ink)]/70"
-              style={{ backgroundColor: fallbackColor }}
-            >
-              {entry.title.charAt(0)}
-            </span>
-          )}
+        {/* the painted acrylic charm (art-source/07-panels F2); its face is transparent,
+            so the title's real cover shows through it. */}
+        <span
+          className="relative block w-24 transition-transform duration-[var(--duration-base)] ease-[var(--ease-bounce-soft)] group-hover:-translate-y-1 group-hover:rotate-[-2deg]"
+          style={{ aspectRatio: "429 / 572" }}
+        >
+          <span className="absolute overflow-hidden" style={{ left: "11.4%", top: "33%", width: "77.2%", height: "58.4%" }}>
+            {entry.cover ? (
+              // eslint-disable-next-line @next/next/no-img-element -- decorative thumbnail, data-driven; matches the room's plain <img> convention for small covers
+              <img src={entry.cover.src} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span
+                className="flex h-full w-full items-center justify-center font-hand text-3xl text-[var(--color-paper-ink)]/70"
+                style={{ backgroundColor: fallbackColor }}
+              >
+                {entry.title.charAt(0)}
+              </span>
+            )}
+          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention */}
+          <img src="/assets/panels/fandom/charm.png" alt="" aria-hidden className="absolute inset-0 h-full w-full drop-shadow-[0_4px_5px_rgba(0,0,0,0.4)]" />
         </span>
       </span>
       <span className="max-w-[4.5rem] truncate font-hand-note text-xs leading-none text-[var(--color-paper-ink)]/70 group-hover:text-[var(--color-accent)]">

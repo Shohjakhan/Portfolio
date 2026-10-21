@@ -79,6 +79,8 @@
   --room-wall-dark: #2a2018;
   --room-wall-warm: #3c2c1e;
   --room-lamp-glow: #ffb870;
+  /* hover/focus highlight for room objects (see [data-hover] in animations.css) */
+  --hover-glow: drop-shadow(0 0 3px rgba(255, 226, 160, 1)) drop-shadow(0 0 10px rgba(255, 186, 90, 0.95)) drop-shadow(0 0 26px rgba(255, 150, 60, 0.8)) drop-shadow(0 0 52px rgba(255, 140, 50, 0.45)) brightness(1.15);
   --room-moonlight: #7c8fc9;
 
   /* --- Room: lamp intensity per time-of-day ----------------------------

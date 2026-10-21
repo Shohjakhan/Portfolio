@@ -28,6 +28,8 @@ function Pill({ children }: { children: string }) {
  * this component only lays it out. Rendered by NavigationLayer as the
  * "about" panel's body, inside Modal's `variant="memory"`.
  */
+const DOODLES = ["compass", "quill", "mountains", "moon", "plane", "seedling"] as const;
+
 export function AboutExperience({ onClose }: AboutExperienceProps) {
   const {
     name,
@@ -54,7 +56,7 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
       <div className="flex items-center gap-4">
         <div
           aria-hidden
-          className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-paper-ink)]/15 bg-[var(--color-cream)] shadow-[var(--shadow-warm-sm)]"
+          className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--color-paper-ink)]/25 bg-[var(--color-cream)] shadow-[var(--shadow-warm-md)]"
         >
           {profileImage ? (
             // eslint-disable-next-line @next/next/no-img-element -- decorative, data-driven; matches the rest of the room's plain <img> convention
@@ -125,6 +127,15 @@ export function AboutExperience({ onClose }: AboutExperienceProps) {
           {[basedIn, languages].filter(Boolean).join(" · ")}
         </p>
       ) : null}
+
+      {/* margin doodles from the sketchbook — ink-and-wash on transparent, so they
+          sit on the parchment like they were drawn there */}
+      <div aria-hidden className="flex items-end justify-between gap-2 opacity-80">
+        {DOODLES.map((name) => (
+          // eslint-disable-next-line @next/next/no-img-element -- decorative, matches the room's plain <img> convention
+          <img key={name} src={`/assets/panels/about/doodle-${name}.png`} alt="" className="h-12 w-auto max-w-[15%] object-contain sm:h-16" />
+        ))}
+      </div>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[var(--color-paper-ink)]/12 pt-6">
         <a

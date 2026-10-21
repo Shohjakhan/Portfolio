@@ -1,6 +1,7 @@
 "use client";
 
 import { getSceneObject } from "@/data/sceneObjects";
+import { GlowCopy } from "@/components/shared/GlowCopy";
 import { InteractiveObject } from "@/primitives/InteractiveObject";
 import { sceneActions, useSceneValue } from "@/state/sceneStore";
 
@@ -24,24 +25,29 @@ export function Coffee() {
       label={definition.label}
       description={definition.description}
       onActivate={() => sceneActions.openPanel(definition.panel)}
-      idleAnimation="float"
+      idleAnimation="settle"
       idleDelayMs={1200}
       hoverEffect="lift"
+      labelStyle={{ marginBottom: "2.75rem" }}
       className="h-full w-full"
     >
-      <div className="relative h-full w-full">
+      <div className="relative mx-auto h-full" style={{ aspectRatio: "260 / 208" }}>
+        <GlowCopy src="/assets/scene/desk/coffee-cup.png" />
         <img
-          src="/assets/scene/desk/coffee-cup.svg"
+          src="/assets/scene/desk/coffee-cup.png"
           alt=""
           aria-hidden
-          className="h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
+          className="relative h-full w-full object-contain drop-shadow-[var(--shadow-warm-sm)]"
         />
+        {/* Painted on black; transparency derived from brightness, so
+            only the light wisps show. */}
         <img
-          src="/assets/scene/desk/coffee-steam.svg"
+          src="/assets/scene/desk/coffee-steam.png"
           alt=""
           aria-hidden
           data-idle={reducedMotion ? undefined : "sway"}
-          className="coffee-steam absolute inset-0 h-full w-full object-contain"
+          style={{ transformOrigin: "50% 100%" }}
+          className="coffee-steam pointer-events-none absolute bottom-[62%] left-[22%] w-[48%]"
         />
       </div>
     </InteractiveObject>

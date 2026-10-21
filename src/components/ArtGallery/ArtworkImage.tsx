@@ -1,7 +1,7 @@
 "use client";
 
 import NextImage from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { GalleryImage } from "@/types/content";
 import { cn } from "@/utils/cn";
 
@@ -40,15 +40,22 @@ export function ArtworkImage({
   className,
   fit = "contain",
 }: ArtworkImageProps) {
-  const [loaded, setLoaded] = useState(false);
+  // Which src has finished loading, rather than a boolean reset in an
+  // effect on src change: a cached image can fire onLoad *before* that
+  // effect runs, and the reset then left it stuck at opacity 0. Keying on
+  // the src makes a new piece show its loading state with no reset needed.
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const loaded = loadedSrc === image.src;
+  const markLoaded = () => setLoadedSrc(image.src);
   const isSvg = image.src.toLowerCase().endsWith(".svg");
+  // Remote sources are Notion uploads (Movies/Anime covers): presigned S3
+  // URLs re-signed on every fetch (so the optimizer's cache never hits)
+  // and often 1MB+ animated GIFs (which the optimizer passes through
+  // un-resized anyway). Routing them through `/_next/image` only added a
+  // server hop with a ~7s upstream timeout that slow S3 downloads blew
+  // past — a 500 and a blank poster. The browser loads them directly instead.
+  const isRemote = /^https?:\/\//i.test(image.src);
   const fitClass = fit === "cover" ? "object-cover" : "object-contain";
-
-  // A new src (piece changed) should show the loading state again, not
-  // keep showing the previous piece's "loaded" fade-in as already done.
-  useEffect(() => {
-    setLoaded(false);
-  }, [image.src]);
 
   if (isSvg) {
     return (
@@ -56,7 +63,7 @@ export function ArtworkImage({
       <img
         src={image.src}
         alt={image.alt}
-        onLoad={() => setLoaded(true)}
+        onLoad={markLoaded}
         className={cn("h-full w-full transition-opacity duration-500", fitClass, loaded ? "opacity-100" : "opacity-0", className)}
       />
     );
@@ -67,10 +74,11 @@ export function ArtworkImage({
       src={image.src}
       alt={image.alt}
       fill
+      unoptimized={isRemote}
       priority={priority}
       loading={priority ? undefined : "lazy"}
       sizes={sizes}
-      onLoad={() => setLoaded(true)}
+      onLoad={markLoaded}
       className={cn("transition-opacity duration-500", fitClass, loaded ? "opacity-100" : "opacity-0", className)}
     />
   );

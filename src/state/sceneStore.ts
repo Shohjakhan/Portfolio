@@ -13,6 +13,9 @@ export interface SceneState {
   audioEnabled: boolean;
   /** Dwell-time stage — see useVisitProgress. Drives small ambient nudges only. */
   visitStage: VisitStage;
+  /** The visitor's own switch on the table lamp. `null` = follow the time of day (lit from
+   * sunset on); `true`/`false` = they've pressed it. The hanging string lights follow the lamp. */
+  lampOverride: boolean | null;
 }
 
 /**
@@ -33,6 +36,7 @@ const initialState: SceneState = {
   reducedMotion: false,
   audioEnabled: false,
   visitStage: "initial",
+  lampOverride: null,
 };
 
 export const sceneStore = createStore<SceneState>(initialState);
@@ -50,7 +54,16 @@ function persistAudioPreference(audioEnabled: boolean) {
   }
 }
 
+/** Whether the lamp (and the string lights with it) is on: the visitor's switch, else the clock. */
+export function isLampLit(state: Pick<SceneState, "lampOverride" | "timeOfDay">): boolean {
+  if (state.lampOverride !== null) return state.lampOverride;
+  return state.timeOfDay === "sunset" || state.timeOfDay === "evening" || state.timeOfDay === "night";
+}
+
 export const sceneActions = {
+  toggleLamp() {
+    sceneStore.setState({ lampOverride: !isLampLit(sceneStore.getState()) });
+  },
   /** No-op when unchanged — useLocalTimeOfDay calls this on a recurring timer, and every store write notifies subscribers. */
   setTimeOfDay(timeOfDay: TimeOfDay) {
     if (sceneStore.getState().timeOfDay === timeOfDay) return;
@@ -92,6 +105,11 @@ export const sceneActions = {
     persistAudioPreference(audioEnabled);
   },
 };
+
+/** Lamp on/off, as one boolean so only the lamp, string lights and room glow re-render. */
+export function useLampLit(): boolean {
+  return useStoreSelector(sceneStore, isLampLit);
+}
 
 /** Selector hook — always select a primitive (or a memoized value), never a fresh object literal. */
 export function useSceneValue<U>(selector: (state: SceneState) => U): U {

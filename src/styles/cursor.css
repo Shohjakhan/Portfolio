@@ -28,14 +28,18 @@
   }
 }
 
+/* gold dust shaken from the nib: each mote drifts a little (its own --dx/--dy) as it fades */
 @keyframes cursor-trail-fade {
   0% {
-    opacity: 0.5;
+    opacity: 0.95;
     transform: translate(-50%, -50%) scale(1);
+  }
+  60% {
+    opacity: 0.6;
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
+    transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 12px))) scale(0.2);
   }
 }
 
@@ -69,12 +73,31 @@
   /* Extremely subtle magical trail — a few soft amber motes fading in the
      feather's wake while it moves, never while it's resting or hovering. */
   .cursor-trail-dot {
-    width: 4px;
-    height: 4px;
     border-radius: 999px;
-    background: var(--room-lamp-glow);
-    box-shadow: 0 0 4px var(--room-lamp-glow);
-    animation: cursor-trail-fade 650ms var(--ease-soft) forwards;
+    background: radial-gradient(circle, #fffbe6 0 30%, #ffd88a 31% 62%, rgba(255, 170, 80, 0.55) 100%);
+    box-shadow:
+      0 0 5px 1px rgba(255, 214, 140, 0.9),
+      0 0 14px 3px var(--room-lamp-glow);
+    animation: cursor-trail-fade 1500ms ease-out forwards;
+  }
+  /* every third mote is a tiny four-point star */
+  .cursor-trail-dot.is-star::before,
+  .cursor-trail-dot.is-star::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: #fff3c4;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-trail-dot.is-star::before {
+    width: 280%;
+    height: 1.5px;
+  }
+  .cursor-trail-dot.is-star::after {
+    width: 1.5px;
+    height: 280%;
   }
 
   .cursor-ripple {

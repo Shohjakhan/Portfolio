@@ -2,8 +2,7 @@
 
 import { AmbientEffects } from "@/components/AmbientEffects";
 import { ArtWall } from "@/components/ArtWall";
-import { Bookshelf } from "@/components/Bookshelf";
-import { Cat } from "@/components/Cat";
+import { BookshelfCorner } from "@/components/BookshelfCorner";
 import { Coffee } from "@/components/Coffee";
 import { Easel } from "@/components/Easel";
 import { Journal } from "@/components/Journal";
@@ -12,7 +11,6 @@ import { Laptop } from "@/components/Laptop";
 import { MemoryWall } from "@/components/MemoryWall";
 import { MoviePoster } from "@/components/MoviePoster";
 import { Phone } from "@/components/Phone";
-import { Plants } from "@/components/Plants";
 import { Plushie } from "@/components/Plushie";
 import { Window } from "@/components/Window";
 
@@ -55,29 +53,17 @@ import { Window } from "@/components/Window";
 export function MobileRoom() {
   return (
     <div className="relative flex flex-col items-center gap-12 px-4 pb-28 pt-8">
-      {/* sky band — Window unmodified, just given a sized box to read its
-          own internal percentages against. */}
-      <div className="relative h-56 w-full max-w-xs shrink-0 sm:h-64 sm:max-w-sm">
-        <Window />
+      {/* the painted window, at the frame's own aspect (Window locks it) */}
+      <div className="relative w-56 shrink-0 sm:w-64">
+        <Window className="relative w-full" />
       </div>
 
       <AmbientEffects density={0.5} />
 
-      {/* shelf vignette — plants/cat are decorative companions (not
-          SceneObjectIds), sized smaller on purpose; the bookshelf itself
-          is the real tap target. */}
-      <section className="flex flex-col items-center gap-4">
-        <div className="flex items-end gap-3">
-          <div className="h-14 w-14 shrink-0">
-            <Plants />
-          </div>
-          <div className="h-14 w-20 shrink-0">
-            <Cat />
-          </div>
-        </div>
-        <div className="h-72 w-36 shrink-0">
-          <Bookshelf />
-        </div>
+      {/* shelf vignette — the bookshelf with its plant and sleeping cat,
+          one painted composite (see BookshelfCorner). */}
+      <section className="h-[26rem] shrink-0">
+        <BookshelfCorner />
       </section>
 
       {/* art vignette */}
@@ -85,7 +71,7 @@ export function MobileRoom() {
         <div className="h-24 w-40 shrink-0">
           <ArtWall />
         </div>
-        <div className="h-60 w-28 shrink-0">
+        <div className="h-64 w-36 shrink-0">
           <Easel />
         </div>
       </section>
@@ -118,7 +104,7 @@ export function MobileRoom() {
         <div className="h-24 w-24 shrink-0">
           <Phone />
         </div>
-        <div className="h-32 w-16 shrink-0">
+        <div className="h-36 w-24 shrink-0">
           <Lamp />
         </div>
       </section>

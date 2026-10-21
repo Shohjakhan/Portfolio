@@ -3,98 +3,95 @@
 import { Background } from "@/components/Background";
 import { useSceneValue } from "@/state/sceneStore";
 import type { TimeOfDay } from "@/types/scene";
+import { cn } from "@/utils/cn";
 
-const STAR_POSITIONS = [
-  { left: "14%", top: "18%" },
-  { left: "26%", top: "34%" },
-  { left: "40%", top: "12%" },
-  { left: "58%", top: "28%" },
-  { left: "72%", top: "16%" },
-  { left: "82%", top: "40%" },
-];
-
+/** Painted clouds (public/assets/scene/window/), drifting across the glass. In clear weather
+ * only the first one passes, by day; cloudy and rainy weather bring all three. */
 const CLOUD_LAYERS = [
-  { top: "10%", left: "8%", width: "42%", duration: 70, delay: -8 },
-  { top: "24%", left: "48%", width: "34%", duration: 90, delay: -40 },
+  { src: "/assets/scene/window/cloud-1.png", top: "8%", left: "6%", width: "46%", duration: 80, delay: -10 },
+  { src: "/assets/scene/window/cloud-2.png", top: "26%", left: "46%", width: "54%", duration: 100, delay: -55 },
+  { src: "/assets/scene/window/cloud-3.png", top: "44%", left: "18%", width: "40%", duration: 90, delay: -30 },
 ];
 
-/** Moon/stars stay mounted at all times and just fade — a conditional
- * mount would snap in/out instead of crossfading, which reads as abrupt
- * rather than "gradual and visually pleasing" (see the task brief). Faint
- * at sunset (stars gathering), full only at night. */
-const NIGHT_SKY_OPACITY: Record<TimeOfDay, number> = {
-  morning: 0,
-  afternoon: 0,
-  sunset: 0.3,
-  evening: 0.75,
-  night: 1,
+/** Clouds are painted sunlit, so they're dimmed as the light goes. */
+const CLOUD_BRIGHTNESS: Record<TimeOfDay, number> = {
+  morning: 0.95,
+  afternoon: 1,
+  sunset: 0.85,
+  evening: 0.5,
+  night: 0.32,
 };
+
+/** Glass opening inside the painted frame (window-frame.png, 640×879),
+ * padded ~1% so the sky's edges tuck under the opaque wood. */
+const GLASS_BOX = { left: "19.2%", top: "8.6%", width: "61.6%", height: "77.6%" };
 
 /**
  * Purely environmental — not an InteractiveObject (no click mapping for the
  * window itself). Shows the living sky, a moon/stars that fade in toward
- * night, and clouds drifting through on cloudy/rainy weather.
+ * night, and clouds drifting through on cloudy/rainy weather — all clipped
+ * to the glass, behind the painted wooden frame (whose panes are
+ * transparent).
+ *
+ * `className` positions/sizes the window; the default is the desktop
+ * canvas placement. The box is aspect-locked to the painted frame.
  */
-export function Window() {
+export function Window({ className }: { className?: string }) {
   const timeOfDay = useSceneValue((state) => state.timeOfDay);
   const weather = useSceneValue((state) => state.weather);
   const reducedMotion = useSceneValue((state) => state.reducedMotion);
-  const nightSkyOpacity = NIGHT_SKY_OPACITY[timeOfDay];
-  const showClouds = weather === "cloudy" || weather === "rain";
+  const overcast = weather === "cloudy" || weather === "rain";
+  const isDay = timeOfDay === "morning" || timeOfDay === "afternoon";
+  const visibleClouds = overcast ? CLOUD_LAYERS : isDay ? CLOUD_LAYERS.slice(0, 1) : [];
 
   return (
     <div
       aria-hidden
-      className="texture-wood-dark absolute left-1/2 top-[5%] h-[48%] w-[30%] min-w-72 -translate-x-1/2 overflow-hidden rounded-t-[42%] rounded-b-lg border-[6px] border-[var(--color-wood-dark)] shadow-[var(--shadow-warm-lg)]"
+      className={cn(className ?? "absolute left-[50.5%] top-[8.5%] w-[27.5%] -translate-x-1/2")}
+      style={{ aspectRatio: "640 / 879" }}
     >
-      <Background className="absolute inset-0" />
+      <div className="absolute overflow-hidden" style={{ ...GLASS_BOX, borderRadius: "50% 50% 0 0 / 28% 28% 0 0" }}>
+        <Background className="absolute inset-0" />
 
-      <div
-        className="absolute inset-0"
-        style={{ opacity: nightSkyOpacity, transition: `opacity var(--duration-scene) var(--ease-soft)` }}
-      >
-        <div
-          data-idle="breathe"
-          className="absolute right-[16%] top-[14%] h-7 w-7 rounded-full"
-          style={{ background: "var(--room-moonlight)", boxShadow: "0 0 24px var(--room-moonlight)" }}
-        />
-        {STAR_POSITIONS.map((position, index) => (
-          <span
-            key={index}
-            data-idle="flicker"
-            className="absolute h-[3px] w-[3px] rounded-full bg-white/90"
-            style={{ left: position.left, top: position.top, animationDelay: `${index * 0.4}s` }}
-          />
-        ))}
-      </div>
-
-      {showClouds && (
         <div
           className="absolute inset-0 overflow-hidden"
-          style={{ opacity: 0.8, transition: `opacity var(--duration-scene) var(--ease-soft)` }}
+          style={{ filter: `brightness(${CLOUD_BRIGHTNESS[timeOfDay]})`, transition: "filter var(--duration-scene) var(--ease-soft)" }}
         >
           {CLOUD_LAYERS.map((cloud, index) => (
+            // eslint-disable-next-line @next/next/no-img-element -- painted sprite, matches the room's plain <img> convention
             <img
-              key={index}
-              src="/assets/scene/window/cloud.svg"
+              key={cloud.src}
+              src={cloud.src}
               alt=""
               className={reducedMotion ? "absolute" : "window-cloud"}
               style={{
                 top: cloud.top,
                 left: cloud.left,
                 width: cloud.width,
+                opacity: visibleClouds.includes(cloud) ? (overcast ? 0.92 : 0.6) : 0,
+                transition: "opacity var(--duration-scene) var(--ease-soft)",
                 animationDuration: reducedMotion ? undefined : `${cloud.duration}s`,
                 animationDelay: reducedMotion ? undefined : `${cloud.delay}s`,
               }}
             />
           ))}
         </div>
-      )}
 
-      {/* Window mullion */}
-      <div className="pointer-events-none absolute inset-0 border-[3px] border-white/10" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-full w-[3px] -translate-x-1/2 bg-white/10" />
-      <div className="pointer-events-none absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 bg-white/10" />
+        {/* rain running down the glass (the wrapper fades it in; the image itself shimmers) */}
+        <div
+          className="absolute inset-0"
+          style={{ opacity: weather === "rain" ? 1 : 0, transition: "opacity var(--duration-scene) var(--ease-soft)" }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- painted overlay */}
+          <img src="/assets/scene/window/rain-glass.png" alt="" className="rain-glass h-full w-full object-cover" />
+        </div>
+      </div>
+
+      <img
+        src="/assets/scene/window/window-frame.png"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full drop-shadow-[var(--shadow-warm-lg)]"
+      />
     </div>
   );
 }

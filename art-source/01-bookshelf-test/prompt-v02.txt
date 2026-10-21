@@ -1,0 +1,15 @@
+Using the attached image only as a reference for the sleeping ginger cat and the trailing pothos plant, paint a new, different bookshelf illustration in portrait orientation, much taller than wide.
+
+A tall, narrow antique walnut bookcase, about twice as tall as it is wide, with a carved cornice and four deep shelves. The shelves hold old books of varied heights, thicknesses and lean, bound in oxblood, deep forest green, ochre, faded navy and warm brown leather and cloth, with abstract antique-gold bands and no lettering. Include one small horizontal stack, and at most one loose parchment sheet in the whole bookcase. A small brass lantern with a lit candle sits on the second shelf from the top. On top of the bookcase, the same ginger tabby cat from the reference is curled asleep with its tail over its nose. At the top left is the same terracotta pot of pothos, its vines trailing down the front and left side.
+
+Rendering: a traditional gouache-and-oil painting, not a digital illustration. No ink outlines and no line art. Every form is defined only by painted shifts in value and color, and edges dissolve softly into the shadows. Loose, visible bristle brushstrokes, dry-brush texture on the wood grain, subtle paper and canvas grain, and gentle color variation within every surface. It should look like a hand-painted background from an animated film, rewarding close inspection.
+
+Lighting: strong warm amber light (#ffb870) rakes in from the upper right. The right edges of the cornice, shelves and book spines catch bright warm highlights, and the left third of the bookcase falls into deep warm-brown shadow. Inside each shelf, light falls off toward the back panel into soft darkness, so the shelves feel deep. The candle adds a small local glow only on its own shelf. A faint cool moonlight rim (#7c8fc9) touches the top of the cat and the cornice.
+
+Palette: deep forest greens (#214b3e, #16302a), muted browns (#4a3423, #2f2015), antique gold (#b08d57), aged parchment (#ede3cd) and warm amber. Nothing is brighter than warm cream (#f6ecd9).
+
+Camera: frontal, natural 50 mm lens, eye level with the second shelf, single-point perspective so the shelf interiors show slight depth.
+
+Composition: the bookcase, cat and plant are centered and fully in frame, filling about 85% of the image height, with empty margin all around. Place them on a perfectly flat, uniform, seamless solid mid-grey (#808080) background. No floor, no wall, no cast shadow, no other objects.
+
+Avoid: ink outlines, line art, cel shading, flat fills, vector look, digital-illustration smoothness, synthetic textures, any text, letters, numbers, watermarks or signatures, cartoon proportions, glossy 3D render, repeated clutter, neon, pure white, pure black, checkerboard pattern.

@@ -21,8 +21,14 @@ export type ViewportTier = "mobile" | "tablet" | "desktop";
 const MOBILE_MAX_WIDTH = 519;
 const TABLET_MAX_WIDTH = 1199;
 
-function resolveTier(width: number): ViewportTier {
+/** A portrait screen (a tablet held upright) can't show the landscape 3:2 room at a
+ * useful size — it would be a small strip between large empty bands — so it gets
+ * the purpose-built vertical composition (`MobileRoom`), same as a phone. */
+const PORTRAIT_MAX_WIDTH = 1100;
+
+function resolveTier(width: number, height: number): ViewportTier {
   if (width <= MOBILE_MAX_WIDTH) return "mobile";
+  if (width <= PORTRAIT_MAX_WIDTH && height > width * 1.1) return "mobile";
   if (width <= TABLET_MAX_WIDTH) return "tablet";
   return "desktop";
 }
@@ -44,14 +50,17 @@ export function useViewportTier(): ViewportTier {
     const mobileQuery = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
     const tabletQuery = window.matchMedia(`(max-width: ${TABLET_MAX_WIDTH}px)`);
 
-    const sync = () => setTier(resolveTier(window.innerWidth));
+    const sync = () => setTier(resolveTier(window.innerWidth, window.innerHeight));
     sync();
 
     mobileQuery.addEventListener("change", sync);
     tabletQuery.addEventListener("change", sync);
+    // orientation / height-only changes don't cross either width query
+    window.addEventListener("resize", sync);
     return () => {
       mobileQuery.removeEventListener("change", sync);
       tabletQuery.removeEventListener("change", sync);
+      window.removeEventListener("resize", sync);
     };
   }, []);
 

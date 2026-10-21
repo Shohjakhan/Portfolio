@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { BookReadItem } from "@/components/BookshelfLibrary/BookReadItem";
 import { MyWritingsBook } from "@/components/BookshelfLibrary/MyWritingsBook";
 import { Shelf } from "@/components/BookshelfLibrary/Shelf";
@@ -42,14 +42,20 @@ export function BookshelfLibrary({ onClose }: BookshelfLibraryProps) {
 
   const activeReadBook = activeReadBookId ? booksRead.find((book) => book.id === activeReadBookId) : undefined;
 
-  if (activeBookId === "writings") return <MyWritingsBook key="writings" onBack={backToShelf} />;
-  if (activeBookId === "warkinless") return <WarkinlessBook key="warkinless" onBack={backToShelf} />;
-  if (activeReadBook) return <BookReadItem key={activeReadBook.id} book={activeReadBook} onBack={backToShelf} />;
+  const reader = (node: ReactNode) => <div className="w-[min(94vw,1000px,calc(76vh*1.43))]">{node}</div>;
+  if (activeBookId === "writings") return reader(<MyWritingsBook key="writings" onBack={backToShelf} />);
+  if (activeBookId === "warkinless") return reader(<WarkinlessBook key="warkinless" onBack={backToShelf} />);
+  if (activeReadBook) return reader(<BookReadItem key={activeReadBook.id} book={activeReadBook} onBack={backToShelf} />);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="relative w-[min(94vw,1180px)]">
       <Shelf booksRead={booksRead} onSelectBook={setActiveBookId} onSelectReadBook={setActiveReadBookId} />
-      <BackLink onClick={onClose} />
+      {/* the way out lives on the case's base trim — nothing else around it */}
+      <BackLink
+        onClick={onClose}
+        variant="dark"
+        className="absolute bottom-[1.2%] left-[4%] z-10 [text-shadow:0_1px_4px_rgba(0,0,0,0.8)]"
+      />
     </div>
   );
 }
